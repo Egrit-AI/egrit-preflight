@@ -98,6 +98,10 @@ interrupted.
 `FAIL`, because the report is about linux/arm64 only; an absent one adds no check. Versions you copy from NVIDIA release notes are declarations; the tool does not
 embed a JetPack compatibility table, because one it cannot keep verified would be worse than none.
 
+[examples/targets/](examples/targets/README.md) holds a declared record for each recent JetPack release (6.2.1, 6.2,
+6.1 and 5.1.8), each citing NVIDIA's release page and the date it was read. Pass the one your device runs, for example
+`--target examples/targets/jetpack-6.2.json`, and check it against what the device reports.
+
 ## Free and open source
 
 Egrit-Preflight is Apache-2.0 and copyright 2026 Neul Space Ltd (see [NOTICE](NOTICE)). The local CLI needs no account, no login, no subscription and no usage credits, and it

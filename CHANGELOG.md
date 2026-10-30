@@ -5,6 +5,12 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Examples: `examples/targets/` holds a declared target record for JetPack 6.2.1, 6.2, 6.1 and 5.1.8, each with the
+  Jetson Linux, CUDA and TensorRT versions from NVIDIA's release page and the date it was read (2026-10-30). The
+  folder README indexes them and says how to add a release. `examples/target-orin-nano-jetpack-6.2.json` keeps its
+  values and now cites the 6.2 page instead of "not re-checked". The no-target `remediation` points at the library
+  (text only; no outcome changes). `tests/test_examples.py` checks every record loads, cites an NVIDIA page with a
+  date, compares cleanly against an arm64 image and is indexed (#10).
 - Docs: `docs/l4t-example.md` records one real `image` run against `nvcr.io/nvidia/l4t-jetpack` pinned by digest,
   from the `L4T inspect` workflow on 2026-10-30: architecture PASS from the config, SBOM PASS from the digest-named
   tag, nothing pulled, `jetson.gpu` REQUIRES_HARDWARE. It states what a registry read does not establish. The report

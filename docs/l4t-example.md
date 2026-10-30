@@ -59,8 +59,9 @@ runner's own `arm64.execution` check failed (no QEMU handler on that runner); th
 - **A PASS here is a registry fact.** The image is built for `linux/arm64` and its publisher lists an SBOM for it.
   That is all. Whether it runs, and whether the SBOM is true, is not established.
 - **Declared versions were not available from this image's config.** The JetPack, L4T, CUDA and TensorRT comparisons
-  need a target record (`--target`) and an image that declares its versions, or a local pull. See
-  [examples/target-orin-nano-jetpack-6.2.json](../examples/target-orin-nano-jetpack-6.2.json).
+  need a target record (`--target`) and an image that declares its versions, or a local pull. See the records by
+  JetPack release in [examples/targets/](../examples/targets/README.md). (The run above predates them, so its
+  remediation names the single example record.)
 - **If the registry cannot be reached**, `image.manifest` and the checks after it read UNKNOWN with a remediation, not
   FAIL. That is the designed result; the tool does not guess.
 
