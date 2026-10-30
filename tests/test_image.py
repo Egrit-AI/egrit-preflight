@@ -215,6 +215,41 @@ class Image(unittest.TestCase):
         self.assertEqual(by_id(r, "image.architecture")["outcome"], "PASS")
         self.assertEqual(r["declared_dependencies"]["env"], {"TENSORRT_VERSION": "10.3.0"})
 
+    def test_hostile_registry_architecture_is_not_established_and_not_copied(self):
+        # Prevents a registry config's architecture (escape codes, bidi, 3000 characters) reaching the report.
+        hostile = "\x1b]0;owned\x07\x9b31m\u202eEVIL" + "A" * 3000
+        r = inspect_image(PINNED, runner=single_platform(ok(json.dumps({"architecture": hostile, "os": "linux"}))))
+        self.assertIsNone(r["architecture"])
+        c = by_id(r, "image.architecture")
+        self.assertEqual(c["outcome"], "UNKNOWN")
+        self.assertNotIn("\x1b", json.dumps(r, ensure_ascii=False))
+
+    def test_hostile_local_architecture_is_not_established(self):
+        # Prevents the same through a local image, whose Architecture field the image's builder controls.
+        r = inspect_image(PINNED, runner=local("arm64\x1b[2J"))
+        self.assertIsNone(r["architecture"])
+        self.assertEqual(by_id(r, "image.architecture")["outcome"], "UNKNOWN")
+
+    def test_manifest_list_platform_parts_must_be_tokens(self):
+        # Prevents a hostile os, architecture or variant string entering image.platforms.
+        doc = {"manifests": [{"platform": {"os": "linux", "architecture": "arm64", "variant": "v8\x1b[2J"}},
+                             {"platform": {"os": "linux\u202e", "architecture": "amd64"}},
+                             {"platform": {"os": "linux", "architecture": "amd64"}}]}
+        fake = FakeRunner([(("docker", "image", "inspect"), bad("No such image")),
+                           (("docker", "buildx", "imagetools"), ok(json.dumps(doc)))])
+        r = inspect_image("ubuntu:24.04", runner=fake)
+        self.assertEqual(r["platforms"], ["linux/amd64", "linux/arm64"])
+
+    def test_label_keys_must_be_tokens_and_are_capped(self):
+        # Prevents registry-controlled label keys (escape codes, unbounded count) filling the report.
+        labels = {f"cuda.{i}\x1b[2J": "1" for i in range(5)}
+        labels.update({f"cuda.k{i:03d}": "1" for i in range(100)})
+        cfg = {"architecture": "arm64", "os": "linux", "config": {"Labels": labels}}
+        r = inspect_image(PINNED, runner=single_platform(ok(json.dumps(cfg))))
+        keys = list(r["declared_dependencies"]["labels"])
+        self.assertEqual(len(keys), 32)
+        self.assertFalse(any("\x1b" in k for k in keys))
+
     def test_helpers(self):
         self.assertTrue(valid_reference("nvcr.io/nvidia/l4t-base:r36.2.0"))
         self.assertEqual(version_tuple("12.6.1-1"), (12, 6, 1))
@@ -302,6 +337,17 @@ class Provenance(unittest.TestCase):
         self.assertEqual(r["provenance"]["status"], "none-published")
         self.assertEqual(by_id(r, "image.sbom")["outcome"], "UNKNOWN")
         self.assertEqual(r["provenance"]["tag_artifacts"], {"sig": f"ubuntu:{DIGEST.replace(':', '-')}.sig"})
+
+    def test_no_tag_probe_when_the_image_itself_was_not_found(self):
+        # Prevents image.sbom PASS for an image the registry did not return, and four extra timeouts when it is down.
+        def imagetools(argv):
+            return ok("{}") if argv[-1].endswith(".sbom") else bad("manifest unknown")
+        fake = FakeRunner([(("docker", "image", "inspect"), bad("No such image")),
+                           (("docker", "buildx", "imagetools"), imagetools)])
+        r = inspect_image(PINNED, runner=fake)
+        self.assertEqual(by_id(r, "image.manifest")["outcome"], "UNKNOWN")
+        self.assertEqual(by_id(r, "image.sbom")["outcome"], "UNKNOWN")
+        self.assertFalse(any(TAG_PROBE.search(c[-1]) for c in fake.calls))
 
     def test_neither_attestation_style_is_unchanged(self):
         # Prevents the tag probe changing the result when there is nothing to find.
