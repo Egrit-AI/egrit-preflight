@@ -25,11 +25,11 @@ state of the development version, not a promise of dates.
 - [ ] Observed target records from a physical Jetson. *AC: `status: observed` record produced on a device; needs hardware.*
 
 ## M4: Public v0.1 Release
-- [ ] CI green on Linux and macOS across Python 3.9 to 3.13. *AC: matrix passes on `main`.*
-- [ ] At least one real ARM64 container execution in CI. *AC: `arm64-smoke` jobs pass and upload `report.json`.*
+- [x] CI green on Linux and macOS across Python 3.9 to 3.13. *AC: matrix passes on `main`.*
+- [x] At least one real ARM64 container execution in CI. *AC: `arm64-smoke` jobs pass and upload `report.json`.*
 - [ ] Security review of command construction and report contents. *AC: second reviewer signs off; findings fixed or recorded.*
 - [ ] Release artifacts: wheel and sdist built in CI, tag `v0.1.0`, release notes stating the limitations. *AC: artifacts attached; verification.md updated from CI.*
-- [ ] Branch protection on `main`: required CI checks, reviews. *AC: ruleset enabled.*
+- [x] Branch protection on `main`: required CI checks, reviews. *AC: ruleset enabled.*
 
 A stable `v0.1.0` is not tagged until the three gates in M4 (CI green, real ARM64 execution in CI, clean install in CI) pass.
 Until then, versions are `0.1.0.devN` and say so.

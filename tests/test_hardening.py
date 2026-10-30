@@ -3,6 +3,7 @@
 import io
 import json
 import os
+import re
 import stat
 import tempfile
 import unittest
@@ -18,8 +19,10 @@ P = f"ubuntu@{DIGEST}"
 
 
 def registry(text):
+    def imagetools(argv):  # the digest-named tag probe (.sbom, .sig, ...) finds nothing here
+        return bad("manifest unknown") if re.search(r":sha256-[0-9a-f]{64}\.[a-z]+$", argv[-1]) else ok(text)
     return FakeRunner([(("docker", "image", "inspect"), bad("No such image")),
-                       (("docker", "buildx", "imagetools"), ok(text))])
+                       (("docker", "buildx", "imagetools"), imagetools)])
 
 
 def by_id(r, cid):
