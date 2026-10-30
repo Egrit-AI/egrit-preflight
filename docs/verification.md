@@ -1,6 +1,6 @@
 # What has been verified
 
-Last updated: 2026-10-30. Version 0.1.0. CI results below are for `fb579c7`.
+Last updated: 2026-10-30. Version 0.1.0. CI results below are for `f1887df`, the last code change before v0.1.0.
 
 ## Verified by running it
 
@@ -55,15 +55,18 @@ anonymously, nothing pulled or run:
   target record. The written example is [l4t-example.md](l4t-example.md); the report is
   [example-l4t-report.json](example-l4t-report.json).
 
-## Verified by CI (GitHub Actions, run 3 on `main` at `fb579c7`, 2026-10-26)
+## Verified by CI (GitHub Actions, run 27 on `main` at `f1887df`, 2026-10-30)
 
-All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/40331286519
+All 15 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/41140016572. `f1887df` is the last code
+change before v0.1.0; the commit the tag points at adds only this record. The first full run, run 3 at `fb579c7` on
+2026-10-26 (10 jobs), was in the private development repository and is not public.
 
-- Unit tests on Ubuntu 24.04 and macOS (`macos-latest`), Python 3.9, 3.10, 3.11, 3.12 and 3.13 (3.10 and 3.12 added after this run; see the latest run on `main`).
+- Unit tests on Ubuntu 24.04 and macOS (`macos-latest`), Python 3.9, 3.10, 3.11, 3.12 and 3.13.
 - Clean install (build, install the wheel in a fresh venv, run the CLI) on Ubuntu and macOS.
 - **Real linux/arm64 container execution**, twice: x86_64 Linux with QEMU, and a native arm64 runner
   (`ubuntu-24.04-arm`). Each pins `ubuntu:24.04` to its digest at run time, runs `smoke`, and asserts `smoke.arch` is
   PASS, stdout is `aarch64` and `jetson.gpu` is `REQUIRES_HARDWARE`. The reports are uploaded as artifacts.
+- The optional `assurance` job (PF-1 to PF-4: property-based, exhaustive and mutation checks of the report reader).
 - The first run found one CI configuration fault, not a code fault: `ubuntu-latest` moved to a release without a
   Python 3.9 build. The unit matrix is pinned to `ubuntu-24.04`.
 
