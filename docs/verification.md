@@ -58,3 +58,6 @@ All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/403
 - Any NVIDIA image (the sandbox's network blocked `nvcr.io`), any L4T behaviour, and everything on a Jetson: CUDA,
   TensorRT, GPU, device nodes, performance. These are `REQUIRES_HARDWARE`.
 - Install from PyPI: nothing is published to PyPI.
+- Reading the image config of a single-platform registry manifest (the NVIDIA L4T case) against a real registry: the
+  path is unit-tested with scripted `docker buildx imagetools inspect --format '{{json .Image}}'` output only, and
+  the exact shape of that output on a real Docker is to be confirmed.
