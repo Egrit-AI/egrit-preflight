@@ -22,8 +22,10 @@ It is not a statement about a Jetson, a GPU, CUDA or TensorRT.
 - `overall` can be `PASS` while `requires_hardware` is not empty. A `PASS` is "nothing that this tool can check failed
   or is unknown", never "ready to deploy".
 - `REQUIRES_HARDWARE` is **never a pass**. It means the question cannot be answered without a physical Jetson.
-- A listed SBOM or provenance attestation is the publisher's declaration. `image.provenance.signature_verified` is
-  **always `false`**: nothing is verified, and the attestations' contents are not read.
+- A listed SBOM or provenance attestation is the publisher's declaration, whether it is a BuildKit attestation
+  manifest or a digest-named tag (`REPO:sha256-<hex>.sbom`, the sigstore convention NVIDIA's images use).
+  `image.provenance.signature_verified` is **always `false`**: nothing is verified, and the attestations' contents are
+  not read.
 - An `observed` check was observed by this tool on this host, emulated or native ARM64. It was never observed on a
   Jetson.
 

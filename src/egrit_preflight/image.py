@@ -25,6 +25,7 @@ SHA_RE = re.compile(r"sha256:[0-9a-f]{64}")
 ATTESTATION_TYPE = "attestation-manifest"
 PREDICATE_KEY = "in-toto.io/predicate-type"
 MAX_ATTESTATION_FETCHES = 4
+TAG_ARTIFACT_SUFFIXES = ("sbom", "att", "sig", "vex")  # REPO:sha256-<hex>.<suffix>, the sigstore tag convention
 
 
 def valid_reference(ref):
@@ -223,6 +224,8 @@ def _provenance(ref, index, result, checks, runner):
     manifests = index.get("manifests") if isinstance(index, dict) else None
     if not isinstance(manifests, list) or not manifests:
         prov["status"] = "no-manifest-list"
+        if _tag_artifacts(ref, result, prov, checks, runner):
+            return None
         return unknown("no registry manifest list was available for this reference.")
     arm64 = set()
     for mf in manifests:
@@ -242,6 +245,8 @@ def _provenance(ref, index, result, checks, runner):
             entries.append((mf["digest"], subject))
     if not entries:
         prov["status"] = "none-published"
+        if _tag_artifacts(ref, result, prov, checks, runner):
+            return None
         return unknown("the registry lists no attestation for the linux/arm64 image.",
                        "Ask the publisher for an SBOM and provenance, or generate your own at build time.")
     repo = repo_name(ref)
@@ -276,6 +281,51 @@ def _provenance(ref, index, result, checks, runner):
         else:
             checks.append(o.check(cid, o.UNKNOWN, f"{what} attestation listed but unreadable.",
                                   detail="; ".join(prov["errors"])))
+
+
+def _tag_artifacts(ref, result, prov, checks, runner):
+    """SBOM, attestation, signature and VEX artefacts published as digest-named tags, the sigstore convention.
+
+    NVIDIA's l4t images list `REPO:sha256-<hex>.sbom`, `.sig` and `.vex` tags for each digest instead of BuildKit
+    attestation manifests. Only each tag's manifest is read, never its contents; nothing is pulled and nothing is
+    verified. Writes the two checks and returns True when at least one such tag exists, else changes nothing.
+    """
+    digest = result.get("digest")
+    if not _is_digest(digest):
+        return False
+    repo = repo_name(ref)
+    found = {}
+    for suffix in TAG_ARTIFACT_SUFFIXES:
+        tag = f"{repo}:{digest.replace(':', '-')}.{suffix}"
+        r = runner(["docker", "buildx", "imagetools", "inspect", "--raw", tag], 60)
+        if r.returncode == 0 and isinstance(safe.loads(r.stdout), dict):
+            found[suffix] = tag
+    if not found:
+        return False
+    prov["tag_artifacts"] = found
+    for suffix in ("sbom", "att"):
+        if suffix in found:
+            prov["attestations"].append({"tag": found[suffix], "subject_digest": digest, "predicate_types": [],
+                                         "style": "digest-named tag"})
+    prov["status"] = "listed" if prov["attestations"] else "none-published"
+    note = "Its contents and any signature were not verified; a digest fixes content, not who published it."
+    listed = {"tags": sorted(found.values()), "signature_tag": found.get("sig")}
+    if "sbom" in found:
+        checks.append(o.check("image.sbom", o.PASS,
+                              f"SBOM is listed by the publisher as a digest-named tag for this image. {note}",
+                              evidence=o.DECLARED, detail=listed))
+    else:
+        checks.append(o.check("image.sbom", o.UNKNOWN, "SBOM attestation not established: the publisher lists "
+                              "digest-named tags for this image, none of them an SBOM.", detail=listed))
+    if "att" in found:
+        checks.append(o.check("image.provenance", o.UNKNOWN, "Build provenance attestation not established: an "
+                              "attestation bundle (.att) is listed for this image and its predicate type was not read.",
+                              detail=listed))
+    else:
+        checks.append(o.check("image.provenance", o.UNKNOWN, "Build provenance attestation not established: the "
+                              "publisher lists digest-named tags for this image, none of them an attestation bundle.",
+                              detail=listed))
+    return True
 
 
 def _arch_check(result, checks):

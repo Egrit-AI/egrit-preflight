@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -172,12 +173,19 @@ def att_doc(*predicates):
     return {"layers": [{"annotations": {"in-toto.io/predicate-type": p}} for p in predicates]}
 
 
-def registry(index, attestations=None, local=False):
-    """A scripted registry. attestations maps an attestation digest to a manifest dict, raw text, or None (error)."""
-    attestations = attestations or {}
+TAG_PROBE = re.compile(r":sha256-[0-9a-f]{64}\.(sbom|att|sig|vex)$")
+
+
+def registry(index, attestations=None, local=False, tags=None):
+    """A scripted registry. attestations maps an attestation digest to a manifest dict, raw text, or None (error).
+    tags maps a digest-named tag suffix (sbom, att, sig, vex) to its manifest dict; unlisted suffixes are unknown."""
+    attestations, tags = attestations or {}, tags or {}
 
     def imagetools(argv):
         target = argv[-1]
+        m = TAG_PROBE.search(target)
+        if m:
+            return ok(json.dumps(tags[m.group(1)])) if m.group(1) in tags else bad("manifest unknown")
         if "@" in target and target.split("@")[1] in attestations:
             body = attestations[target.split("@")[1]]
             if body is None:
@@ -191,9 +199,56 @@ def registry(index, attestations=None, local=False):
 
 
 class Provenance(unittest.TestCase):
-    def run_img(self, index, attestations=None, local=False, ref=PINNED):
-        fake = registry(index, attestations, local)
+    def run_img(self, index, attestations=None, local=False, ref=PINNED, tags=None):
+        fake = registry(index, attestations, local, tags)
         return inspect_image(ref, runner=fake), fake
+
+    def test_sbom_published_as_a_digest_named_tag_is_listed(self):
+        # Prevents an NVIDIA image, whose SBOM is a sigstore-style tag, reading as "no SBOM published".
+        r, fake = self.run_img({"layers": []}, tags={"sbom": {"layers": []}, "sig": {"layers": []}})
+        c = by_id(r, "image.sbom")
+        self.assertEqual((c["outcome"], c["evidence"]), ("PASS", "declared"))
+        self.assertEqual(r["provenance"]["status"], "listed")
+        self.assertIs(r["provenance"]["signature_verified"], False)
+        self.assertTrue(c["detail"]["signature_tag"].endswith(".sig"))
+        self.assertEqual(r["provenance"]["attestations"][0]["subject_digest"], DIGEST)
+        self.assertEqual(by_id(r, "image.provenance")["outcome"], "UNKNOWN")
+        probes = [c[-1] for c in fake.calls if "--raw" in c and TAG_PROBE.search(c[-1])]
+        self.assertEqual(len(probes), 4)
+        self.assertFalse(any(c[:2] == ["docker", "pull"] for c in fake.calls))
+
+    def test_attestation_bundle_tag_names_itself_but_stays_unknown(self):
+        # Prevents a .att tag, whose predicate type is not read, being promoted to a provenance PASS.
+        r, _ = self.run_img({"layers": []}, tags={"att": {"layers": []}})
+        c = by_id(r, "image.provenance")
+        self.assertEqual(c["outcome"], "UNKNOWN")
+        self.assertIn(".att", c["summary"])
+        self.assertEqual(r["provenance"]["status"], "listed")
+        self.assertEqual(by_id(r, "image.sbom")["outcome"], "UNKNOWN")
+
+    def test_only_a_signature_tag_keeps_status_none_published(self):
+        # Prevents a .sig alone counting as an attestation.
+        r, _ = self.run_img({"manifests": [plat(ARM, "arm64")]}, tags={"sig": {"layers": []}})
+        self.assertEqual(r["provenance"]["status"], "none-published")
+        self.assertEqual(by_id(r, "image.sbom")["outcome"], "UNKNOWN")
+        self.assertEqual(r["provenance"]["tag_artifacts"], {"sig": f"ubuntu:{DIGEST.replace(':', '-')}.sig"})
+
+    def test_neither_attestation_style_is_unchanged(self):
+        # Prevents the tag probe changing the result when there is nothing to find.
+        r, _ = self.run_img({"manifests": [plat(ARM, "arm64")]})
+        self.assertEqual(r["provenance"]["status"], "none-published")
+        self.assertNotIn("tag_artifacts", r["provenance"])
+        self.assertTrue(by_id(r, "image.sbom")["summary"].startswith("SBOM attestation not established: the registry lists no"))
+
+    def test_buildkit_attestations_are_not_followed_by_a_tag_probe(self):
+        # Prevents four needless registry calls once an attestation manifest was already found.
+        _, fake = self.run_img({"manifests": [plat(ARM, "arm64"), att(ATT_ARM, ARM)]}, {ATT_ARM: att_doc(SPDX)})
+        self.assertFalse(any(TAG_PROBE.search(c[-1]) for c in fake.calls))
+
+    def test_no_digest_means_no_tag_probe(self):
+        # Prevents a probe built from a missing digest.
+        _, fake = self.run_img({"layers": []}, local=True, ref="ubuntu:24.04")
+        self.assertFalse(any(TAG_PROBE.search(c[-1]) for c in fake.calls))
 
     def test_sbom_and_provenance_listed(self):
         index = {"manifests": [plat(ARM, "arm64"), att(ATT_ARM, ARM), plat(AMD, "amd64"), att(ATT_AMD, AMD)]}

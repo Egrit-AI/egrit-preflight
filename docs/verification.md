@@ -58,3 +58,6 @@ All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/403
 - Any NVIDIA image (the sandbox's network blocked `nvcr.io`), any L4T behaviour, and everything on a Jetson: CUDA,
   TensorRT, GPU, device nodes, performance. These are `REQUIRES_HARDWARE`.
 - Install from PyPI: nothing is published to PyPI.
+- Digest-named tag artefacts (`.sbom`, `.sig`, `.att`, `.vex`) against a real registry: the probe is unit-tested with
+  scripted output only. The access probe of 2026-10-29 saw such tags on `nvcr.io/nvidia/l4t-jetpack`, and no CLI run
+  has read them yet.
