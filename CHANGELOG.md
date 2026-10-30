@@ -5,6 +5,11 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- CI: a manually triggered `L4T inspect` job (`workflow_dispatch`) inspects one digest-pinned NVIDIA L4T image from
+  its registry on an Ubuntu runner, which has the Docker and network the development sandbox lacked. It pulls and
+  runs nothing, asserts only what must hold off-device (`jetson.gpu` REQUIRES_HARDWARE, `hardware_verified` false,
+  the digest read equals the one given) and uploads the `image` output and the JSON report as the evidence for the
+  documented example (#2, public repository).
 - Report contract (additive, `schema_version` stays 1): `image` UNKNOWNs say what to supply. The four checks that run
   without a target record carry a `remediation` naming `--target` and the example record. When the image was read
   only from its registry manifest, `runtime.cuda`, `runtime.tensorrt` and `target.l4t` say the version was not read
