@@ -5,6 +5,12 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+Nothing yet.
+
+## 0.1.0 (2026-10-30)
+
+First release. Standard library only, Python 3.9 or later, Apache-2.0.
+
 - Examples: `examples/targets/` holds a declared target record for JetPack 6.2.1, 6.2, 6.1 and 5.1.8, each with the
   Jetson Linux, CUDA and TensorRT versions from NVIDIA's release page and the date it was read (2026-10-30). The
   folder README indexes them and says how to add a release. `examples/target-orin-nano-jetpack-6.2.json` keeps its
@@ -85,9 +91,8 @@ repository; entries after it refer to this repository.
   `docs/releases/v0.1.0.md` states what the release cannot verify. `CONTRIBUTING.md` gains the release
   procedure (#6, public repository).
 
-## 0.1.0 (2026-10-26)
-
-First release. Standard library only, Python 3.9 or later, Apache-2.0.
+Prepared on 2026-10-26 in the private development repository and not tagged then; everything above was added before
+the first tag.
 
 - `doctor`: host, Docker, Buildx and the ARM64 route (Linux x86_64 with QEMU, native Linux ARM64, Intel Mac emulation,
   Apple Silicon). Read-only; never registers QEMU for you.
