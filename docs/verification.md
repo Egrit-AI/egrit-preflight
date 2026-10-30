@@ -39,6 +39,22 @@ registered by hand through `/proc/sys/fs/binfmt_misc` with the `F` flag):
 - The real run exposed one defect (an index digest inspected locally names no architecture under Docker's containerd
   image store); it is fixed and has a regression test.
 
+## Verified against a live NVIDIA registry (GitHub Actions, `L4T inspect`, 2026-10-30)
+
+Run https://github.com/Egrit-AI/egrit-preflight/actions/runs/41063039600 on `ubuntu-latest` (x86_64, Docker 29.4.2,
+Buildx 0.38.1), against `nvcr.io/nvidia/l4t-jetpack@sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673`,
+anonymously, nothing pulled or run:
+
+- The single-platform manifest's image config was read with `imagetools inspect --format '{{json .Image}}'`:
+  `image.manifest` PASS, `image.architecture` PASS (observed, `arm64`). The scripted shape the unit tests assume
+  matched the real one.
+- The digest-named `.sbom` tag was found: `image.sbom` PASS (declared); a `.sig` tag was recorded, `signature_verified`
+  false; `image.provenance` UNKNOWN (no attestation bundle). Contents were not read.
+- `jetson.gpu` REQUIRES_HARDWARE, `hardware_verified` false, `smoke_executed` false, digest read equal to the one given.
+- The config's environment declares no CUDA, TensorRT or L4T version, so the version comparisons stay UNKNOWN without a
+  target record. The written example is [l4t-example.md](l4t-example.md); the report is
+  [example-l4t-report.json](example-l4t-report.json).
+
 ## Verified by CI (GitHub Actions, run 3 on `main` at `fb579c7`, 2026-10-26)
 
 All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/40331286519
@@ -55,14 +71,6 @@ All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/403
 
 - Docker Desktop on any platform (the macOS runners run the unit and install jobs only, without Docker), rootless
   Docker, remote Docker contexts (the QEMU check reads the local machine).
-- Any NVIDIA image (the sandbox's network blocked `nvcr.io`), any L4T behaviour, and everything on a Jetson: CUDA,
-  TensorRT, GPU, device nodes, performance. These are `REQUIRES_HARDWARE`.
-  The `L4T inspect` workflow (`workflow_dispatch`, `.github/workflows/l4t-inspect.yml`) exists to make the registry
-  read on a runner with Docker and network; no run of it is recorded here yet.
+- Any L4T behaviour and everything on a Jetson: CUDA, TensorRT, GPU, device nodes, performance. These are
+  `REQUIRES_HARDWARE`. The registry read of one L4T image is verified (above); nothing from that image has run anywhere.
 - Install from PyPI: nothing is published to PyPI.
-- Reading the image config of a single-platform registry manifest (the NVIDIA L4T case) against a real registry: the
-  path is unit-tested with scripted `docker buildx imagetools inspect --format '{{json .Image}}'` output only, and
-  the exact shape of that output on a real Docker is to be confirmed.
-- Digest-named tag artefacts (`.sbom`, `.sig`, `.att`, `.vex`) against a real registry: the probe is unit-tested with
-  scripted output only. The access probe of 2026-10-29 saw such tags on `nvcr.io/nvidia/l4t-jetpack`, and no CLI run
-  has read them yet.

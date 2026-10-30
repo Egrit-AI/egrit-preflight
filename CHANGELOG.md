@@ -5,6 +5,10 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Docs: `docs/l4t-example.md` records one real `image` run against `nvcr.io/nvidia/l4t-jetpack` pinned by digest,
+  from the `L4T inspect` workflow on 2026-10-30: architecture PASS from the config, SBOM PASS from the digest-named
+  tag, nothing pulled, `jetson.gpu` REQUIRES_HARDWARE. It states what a registry read does not establish. The report
+  is `docs/example-l4t-report.json`; `docs/verification.md` records the run (#2, public repository).
 - CI: a manually triggered `L4T inspect` job (`workflow_dispatch`) inspects one digest-pinned NVIDIA L4T image from
   its registry on an Ubuntu runner, which has the Docker and network the development sandbox lacked. It pulls and
   runs nothing, asserts only what must hold off-device (`jetson.gpu` REQUIRES_HARDWARE, `hardware_verified` false,

@@ -1,0 +1,346 @@
+{
+  "checks": [
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Docker version 29.4.2, build 055a478\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.cli",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker CLI 29.4.2."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "info",
+          "--format",
+          "{{json .}}"
+        ],
+        "output_omitted": true,
+        "returncode": 0,
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.daemon",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker daemon 29.4.2 reachable."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.buildx",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker Buildx 0.38.1."
+    },
+    {
+      "detail": "mode: linux-x86_64-qemu",
+      "evidence": "none",
+      "id": "arm64.execution",
+      "outcome": "FAIL",
+      "remediation": "Register QEMU for arm64 yourself, once, as an administrator (Egrit-Preflight never does this for you):\n  docker run --privileged --rm tonistiigi/binfmt --install arm64\nor install your distribution's qemu-user-static and binfmt packages. Review https://github.com/tonistiigi/binfmt before running a privileged container.",
+      "section": "doctor",
+      "summary": "x86_64 Linux without an enabled QEMU aarch64 handler (binfmt: absent)."
+    },
+    {
+      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.valid",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image reference is well formed."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.pinned",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Reference is pinned by digest."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "imagetools",
+          "inspect",
+          "--format",
+          "{{json .Image}}",
+          "nvcr.io/nvidia/l4t-jetpack@sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673"
+        ],
+        "returncode": 0
+      },
+      "evidence": "observed",
+      "id": "image.manifest",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Single-platform manifest and its image config inspected (nothing pulled)."
+    },
+    {
+      "evidence": "observed",
+      "id": "image.architecture",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image provides linux/arm64."
+    },
+    {
+      "detail": {
+        "signature_tag": "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sig",
+        "tags": [
+          "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sbom",
+          "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sig",
+          "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.vex"
+        ]
+      },
+      "evidence": "declared",
+      "id": "image.sbom",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "SBOM is listed by the publisher as a digest-named tag for this image. Its contents and any signature were not verified; a digest fixes content, not who published it."
+    },
+    {
+      "detail": {
+        "signature_tag": "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sig",
+        "tags": [
+          "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sbom",
+          "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sig",
+          "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.vex"
+        ]
+      },
+      "evidence": "none",
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not established: the publisher lists digest-named tags for this image, none of them an attestation bundle."
+    },
+    {
+      "evidence": "none",
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
+      "section": "image",
+      "summary": "JetPack version not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "target.l4t",
+      "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
+      "section": "image",
+      "summary": "L4T agreement not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
+      "section": "image",
+      "summary": "CUDA version not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
+      "section": "image",
+      "summary": "TensorRT version not compared. No target record supplied (--target)."
+    },
+    {
+      "detail": "An inspected manifest or an ARM64 smoke test is not Jetson, CUDA or TensorRT compatibility.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "image",
+      "summary": "Whether this image's CUDA/TensorRT user space works on a Jetson GPU needs a physical device."
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Docker version 29.4.2, build 055a478\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{json .}}"
+      ],
+      "output_omitted": true,
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "imagetools",
+        "inspect",
+        "--format",
+        "{{json .Image}}",
+        "nvcr.io/nvidia/l4t-jetpack@sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673"
+      ],
+      "returncode": 0
+    }
+  ],
+  "docker": {
+    "buildx_version": "0.38.1",
+    "cli_version": "29.4.2",
+    "daemon_architecture": "x86_64",
+    "daemon_os": "linux",
+    "daemon_version": "29.4.2",
+    "docker_desktop": false
+  },
+  "hardware_verified": false,
+  "host": {
+    "architecture": "x86_64",
+    "binfmt_qemu_aarch64": "absent",
+    "execution_mode": "linux-x86_64-qemu",
+    "os": "linux",
+    "python": "3.12.15"
+  },
+  "image": {
+    "architecture": "arm64",
+    "declared_dependencies": {
+      "env": {
+        "NVIDIA_DRIVER_CAPABILITIES": "all",
+        "NVIDIA_VISIBLE_DEVICES": "all"
+      },
+      "labels": {}
+    },
+    "digest": "sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673",
+    "platforms": null,
+    "provenance": {
+      "arm64_manifest_digests": [],
+      "attestations": [
+        {
+          "predicate_types": [],
+          "style": "digest-named tag",
+          "subject_digest": "sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673",
+          "tag": "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sbom"
+        }
+      ],
+      "errors": [],
+      "signature_verified": false,
+      "status": "listed",
+      "tag_artifacts": {
+        "sbom": "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sbom",
+        "sig": "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.sig",
+        "vex": "nvcr.io/nvidia/l4t-jetpack:sha256-34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673.vex"
+      }
+    },
+    "reference": "nvcr.io/nvidia/l4t-jetpack@sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673"
+  },
+  "limitations": [
+    "ARM64 user-space emulation or a native ARM64 run is not a Jetson run.",
+    "CUDA, TensorRT, the NVIDIA driver, device nodes and GPU performance are not tested.",
+    "Declared versions (target records, image tags and labels) are not observed on a device.",
+    "A mocked or emulated result is never hardware verification."
+  ],
+  "overall": "FAIL",
+  "provenance": {
+    "generated_by": "egrit-preflight 0.1.0",
+    "inputs": {
+      "image_reference": "nvcr.io/nvidia/l4t-jetpack@sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673",
+      "target_record_sha256": null
+    },
+    "python": "3.12.15",
+    "smoke_executed": false,
+    "telemetry": "none; this tool sends nothing anywhere"
+  },
+  "requires_hardware": [
+    "jetson.gpu"
+  ],
+  "schema_version": "1",
+  "target": {
+    "architecture": "linux/arm64",
+    "record": null
+  },
+  "timestamp": "2026-10-30T13:25:17Z",
+  "tool": {
+    "name": "egrit-preflight",
+    "version": "0.1.0"
+  },
+  "uncertainties": [
+    {
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not established: the publisher lists digest-named tags for this image, none of them an attestation bundle."
+    },
+    {
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "JetPack version not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "target.l4t",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "L4T agreement not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "CUDA version not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "TensorRT version not compared. No target record supplied (--target)."
+    }
+  ]
+}
