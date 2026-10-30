@@ -28,6 +28,14 @@ def local(arch="arm64", env=None):
     return FakeRunner([(("docker", "image", "inspect"), ok(image_inspect(arch, env)))])
 
 
+def single_platform(config_answer):
+    """No local image; the registry answers --raw with a single-platform manifest and --format with config_answer."""
+    def imagetools(argv):
+        return config_answer if "--format" in argv else ok(json.dumps({"schemaVersion": 2, "config": {"digest": "x"}}))
+    return FakeRunner([(("docker", "image", "inspect"), bad("No such image")),
+                       (("docker", "buildx", "imagetools"), imagetools)])
+
+
 class Image(unittest.TestCase):
     def test_invalid_references_fail_and_run_nothing(self):
         for bad_ref in ("", "-v /:/host", "ubuntu 24.04", "UBUNTU;rm", "a" * 300, "x@sha256:short"):
@@ -173,6 +181,39 @@ class Image(unittest.TestCase):
         c = by_id(inspect_image(PINNED, t, runner=local()), "runtime.cuda")
         self.assertEqual(c["summary"], "Image declares no CUDA version.")
         self.assertNotIn("remediation", c)
+    def test_single_platform_manifest_reads_its_config_for_architecture_and_versions(self):
+        # Prevents the registry path establishing nothing for NVIDIA's single-platform L4T images.
+        cfg = {"architecture": "arm64", "os": "linux",
+               "config": {"Env": ["CUDA_VERSION=12.6.1", "PATH=/usr/bin"], "Labels": {"org.opencontainers.image.version": "1"}}}
+        fake = single_platform(ok(json.dumps(cfg)))
+        r = inspect_image("nvcr.io/nvidia/l4t-jetpack:r36.4.0", runner=fake)
+        self.assertEqual(r["source"], "registry manifest")
+        self.assertEqual(by_id(r, "image.architecture")["outcome"], "PASS")
+        self.assertEqual(by_id(r, "image.architecture")["evidence"], "observed")
+        self.assertEqual(r["declared_dependencies"]["env"], {"CUDA_VERSION": "12.6.1"})
+        self.assertEqual(by_id(r, "jetson.gpu")["outcome"], "REQUIRES_HARDWARE")
+        self.assertFalse(any(c[:2] == ["docker", "pull"] for c in fake.calls))
+
+    def test_single_platform_amd64_config_fails_like_the_local_path(self):
+        # Prevents an amd64-only image reading as merely UNKNOWN once its config is in hand.
+        r = inspect_image(PINNED, runner=single_platform(ok(json.dumps({"architecture": "amd64", "os": "linux"}))))
+        c = by_id(r, "image.architecture")
+        self.assertEqual(c["outcome"], "FAIL")
+        self.assertIn("mismatch", c["summary"])
+
+    def test_single_platform_unreadable_config_stays_unknown_with_remediation(self):
+        # Prevents a failed config read turning into a claim either way.
+        c = by_id(inspect_image(PINNED, runner=single_platform(bad("unsupported"))), "image.architecture")
+        self.assertEqual(c["outcome"], "UNKNOWN")
+        self.assertIn("remediation", c)
+
+    def test_platform_keyed_config_map_takes_the_arm64_entry(self):
+        # Prevents a map-shaped answer (what buildx prints for a list) reading as no config at all.
+        doc = {"linux/amd64": {"architecture": "amd64", "os": "linux"},
+               "linux/arm64": {"architecture": "arm64", "os": "linux", "config": {"Env": ["TENSORRT_VERSION=10.3.0"]}}}
+        r = inspect_image(PINNED, runner=single_platform(ok(json.dumps(doc))))
+        self.assertEqual(by_id(r, "image.architecture")["outcome"], "PASS")
+        self.assertEqual(r["declared_dependencies"]["env"], {"TENSORRT_VERSION": "10.3.0"})
 
     def test_helpers(self):
         self.assertTrue(valid_reference("nvcr.io/nvidia/l4t-base:r36.2.0"))

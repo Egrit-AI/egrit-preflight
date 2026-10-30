@@ -11,6 +11,12 @@ repository; entries after it refer to this repository.
   there (declared dependencies come from a local image only) and give the `docker pull --platform linux/arm64`
   command, instead of "Image declares no CUDA version" from a path that never read the image. Text and
   `remediation` only: no new check id, no outcome changes. Fixtures regenerated (#9, public repository).
+- `image`: for a single-platform registry manifest (NVIDIA's L4T images), the image config is now read with
+  `docker buildx imagetools inspect --format '{{json .Image}}'`, a small JSON document and not a layer, so
+  `image.architecture` is PASS or FAIL (observed) and the declared CUDA, TensorRT and L4T versions are reported as
+  the local path reports them. When the config cannot be read, `image.architecture` stays UNKNOWN with its
+  remediation. Nothing is pulled; `jetson.gpu` stays REQUIRES_HARDWARE. Not yet run against a real registry
+  (`docs/verification.md`) (#7, public repository).
 - `image`: SBOM, attestation, signature and VEX artefacts published as digest-named tags (`REPO:sha256-<hex>.sbom`
   and so on, the sigstore convention NVIDIA's l4t images use) are now found when no BuildKit attestation manifest is
   listed. Their manifests are read, never their contents. A `.sbom` tag makes `image.sbom` PASS (`declared`); a

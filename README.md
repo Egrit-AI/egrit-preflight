@@ -74,7 +74,7 @@ interrupted.
 - `doctor`: host OS/architecture, Docker CLI, daemon, Buildx and the ARM64 route: Linux x86_64 with QEMU, native Linux
   ARM64, Intel Mac with Docker Desktop emulation, Apple Silicon (ARM64 containers in Docker's VM). Read-only. If QEMU
   is missing it prints the manual recipe and runs nothing.
-- `image --image REF [--target FILE] [--require-digest]`: reads a local image, or the registry manifest, without
+- `image --image REF [--target FILE] [--require-digest]`: reads a local image, or the registry manifest and its image config, without
   pulling or running it. Reports digest, architecture and the CUDA/TensorRT/L4T versions the image declares, and
   compares them with an optional target record. It also lists the SBOM and build-provenance attestations the registry
   publishes for the `linux/arm64` image (`image.sbom`, `image.provenance`, and `image.provenance` in the report). Missing
