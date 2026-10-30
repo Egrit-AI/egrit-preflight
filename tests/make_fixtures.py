@@ -10,6 +10,7 @@ import copy
 import io
 import json
 import os
+import re
 import sys
 import types
 from pathlib import Path
@@ -42,6 +43,8 @@ def _registry(index, predicates=("https://spdx.dev/Document",)):
     def answer(argv):
         if index is None:
             return bad("registry unreachable")
+        if re.search(r":sha256-[0-9a-f]{64}\.(sbom|att|sig|vex)$", argv[-1]):
+            return bad("manifest unknown")  # no scenario publishes digest-named tag artefacts
         if argv[-1].endswith(ATT_MANIFEST):
             return ok(json.dumps({"layers": [{"annotations": {"in-toto.io/predicate-type": p}} for p in predicates]}))
         return ok(json.dumps(index))

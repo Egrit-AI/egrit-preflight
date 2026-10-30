@@ -17,6 +17,13 @@ repository; entries after it refer to this repository.
   the local path reports them. When the config cannot be read, `image.architecture` stays UNKNOWN with its
   remediation. Nothing is pulled; `jetson.gpu` stays REQUIRES_HARDWARE. Not yet run against a real registry
   (`docs/verification.md`) (#7, public repository).
+- `image`: SBOM, attestation, signature and VEX artefacts published as digest-named tags (`REPO:sha256-<hex>.sbom`
+  and so on, the sigstore convention NVIDIA's l4t images use) are now found when no BuildKit attestation manifest is
+  listed. Their manifests are read, never their contents. A `.sbom` tag makes `image.sbom` PASS (`declared`); a
+  `.att` tag is named in `image.provenance`, which stays UNKNOWN because its predicate type is not read; a `.sig` tag
+  is recorded with `signature_verified` still `false`. `image.provenance.status` keeps its existing values; the found
+  tags are recorded under a new, additive `image.provenance.tag_artifacts`. Images with neither style are unchanged
+  (#8, public repository).
 - Report contract (additive, `schema_version` stays 1): new rule 11. The reference reader rejects a report whose
   `checks` is empty, one with no `jetson.gpu` check, and one whose `requires_hardware` leaves out `jetson.gpu`. Before,
   `checks: []` with `overall: PASS` was accepted: a report that checked nothing read as a clean pass. A

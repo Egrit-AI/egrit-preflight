@@ -61,3 +61,6 @@ All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/403
 - Reading the image config of a single-platform registry manifest (the NVIDIA L4T case) against a real registry: the
   path is unit-tested with scripted `docker buildx imagetools inspect --format '{{json .Image}}'` output only, and
   the exact shape of that output on a real Docker is to be confirmed.
+- Digest-named tag artefacts (`.sbom`, `.sig`, `.att`, `.vex`) against a real registry: the probe is unit-tested with
+  scripted output only. The access probe of 2026-10-29 saw such tags on `nvcr.io/nvidia/l4t-jetpack`, and no CLI run
+  has read them yet.
