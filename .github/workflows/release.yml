@@ -1,44 +1,67 @@
 name: Release
-# Runs when a v* tag is pushed. Checks that the tag names the version the package carries and that the release notes
-# exist, runs the unit tests, builds the wheel and sdist the way the clean-install CI job does, and publishes a GitHub
-# release carrying both and docs/releases/<tag>.md as its notes. Publishing to PyPI is not here yet (#4): it needs the
-# trusted publisher to exist first, and no token is ever stored in this repository.
+# Runs when a v* tag is pushed, in two jobs. `build` has read-only access: it checks that the tag names the version the
+# package carries, that the tagged commit is on main and that the release notes exist, runs the unit tests, and builds
+# the wheel and sdist with a pinned build backend. `publish` is the only job that can write, and it runs no build code:
+# it downloads the files `build` uploaded and creates the GitHub release with docs/releases/<tag>.md as its notes.
+# Publishing to PyPI is not here yet (#4): it needs the trusted publisher to exist first, and no token is stored here.
 on:
   push:
     tags: ["v*"]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  release:
-    name: build and publish the GitHub release
+  build:
+    name: check the tag, test and build
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
-      - name: The tag names the version the package carries, and the release notes exist
+      - name: The tag names the package version, is on main, and its release notes exist
         run: |
           version="$(PYTHONPATH=src python -c 'import egrit_preflight; print(egrit_preflight.__version__)')"
           test "$GITHUB_REF_NAME" = "v$version" || { echo "tag $GITHUB_REF_NAME does not match __version__ $version"; exit 1; }
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "tag $GITHUB_REF_NAME is not on main"; exit 1; }
           test -f "docs/releases/$GITHUB_REF_NAME.md" || { echo "docs/releases/$GITHUB_REF_NAME.md is missing: write the release notes first"; exit 1; }
       - name: Unit tests (mocked Docker; not hardware verification)
         run: PYTHONPATH=src python -m unittest discover -s tests -t . -q
       - name: Build the wheel and sdist, install the wheel in an isolated venv, run the CLI
+        env:
+          PIP_CONSTRAINT: ${{ github.workspace }}/.github/release-constraints.txt
         run: |
           python -m pip install build==1.2.2
           python -m build
           python -m venv /tmp/clean
           /tmp/clean/bin/pip install dist/*.whl
-          cd /tmp
-          /tmp/clean/bin/egrit-preflight --version
-      - name: Publish the GitHub release with the notes and the artefacts
+          (cd /tmp && /tmp/clean/bin/egrit-preflight --version)
+          mkdir release
+          cp dist/* release/
+          cp "docs/releases/$GITHUB_REF_NAME.md" release/NOTES.md
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release
+          path: release/
+          if-no-files-found: error
+
+  publish:
+    name: publish the GitHub release
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Download what build produced and publish it, with no checkout and no build code
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag \
-            --title "Egrit-Preflight $GITHUB_REF_NAME" --notes-file "docs/releases/$GITHUB_REF_NAME.md"
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name release --dir release
+          ls -l release
+          gh release create "$GITHUB_REF_NAME" release/*.whl release/*.tar.gz --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "Egrit-Preflight $GITHUB_REF_NAME" --notes-file release/NOTES.md

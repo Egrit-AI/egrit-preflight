@@ -11,6 +11,19 @@ Nothing yet.
 
 First release. Standard library only, Python 3.9 or later, Apache-2.0.
 
+- Security review of 2026-10-30 (the code changed since the review of 2026-10-26), all findings fixed:
+  - Report contract (additive, `schema_version` stays 1): new rule 12. `image.architecture`, `image.platforms` and
+    attestation `predicate_types` come from a registry and are exported by the allowlist, so the reference reader now
+    requires them to be short tokens; before, an escape sequence or a 3000-character architecture in a registry config
+    was accepted and exported. One new invalid fixture, `architecture-control-chars.json` (6 valid, 30 invalid).
+  - `image`: an architecture, platform part or label key that is not a short token is not copied (it reads as not
+    established); at most 32 labels are kept. Digest-named tags are probed only when the image itself was found, so a
+    missing image no longer gets `image.sbom` PASS from a `.sbom` tag, and an unreachable registry costs no extra
+    timeouts.
+  - Reports are written as ASCII JSON, so C1 controls and bidi overrides are escaped, as `docs/security.md` said.
+  - Release workflow: the job that can write runs no build code; the build backend is pinned
+    (`.github/release-constraints.txt`); a tag that is not on `main` is refused.
+  - `docs/security.md` now describes the image config read and the tag probes.
 - Examples: `examples/targets/` holds a declared target record for JetPack 6.2.1, 6.2, 6.1 and 5.1.8, each with the
   Jetson Linux, CUDA and TensorRT versions from NVIDIA's release page and the date it was read (2026-10-30). The
   folder README indexes them and says how to add a release. `examples/target-orin-nano-jetpack-6.2.json` keeps its

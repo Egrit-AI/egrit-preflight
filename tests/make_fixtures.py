@@ -177,6 +177,8 @@ def invalid_fixtures(valid=None):
         "requires-hardware-emptied.json": (_mutate(p, setter(["requires_hardware"], [])),
                                            "requires_hardware does not list exactly"),
         "overall-pass-over-a-fail.json": (_mutate(f, setter(["overall"], "PASS")), "overall is PASS but the checks give FAIL"),
+        "architecture-control-chars.json": (_mutate(p, setter(["image", "architecture"], "arm64\u001b]0;owned\u0007")),
+                                            "image.architecture must be a short lowercase token"),
         "signature-verified-true.json": (_mutate(p, setter(["image", "provenance", "signature_verified"], True)),
                                          "signature_verified must be false"),
         "declared-claimed-observed.json": (_mutate(d, lambda x: _check(x, "target.jetpack").update(evidence="observed")),

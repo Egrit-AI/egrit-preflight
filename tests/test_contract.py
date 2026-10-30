@@ -23,7 +23,7 @@ REGENERATE = "Run `python3 -m tests.make_fixtures` and review the diff: the repo
 BEYOND_SCHEMA = {"gpu-check-pass.json", "gpu-check-observed.json", "checks-empty.json", "gpu-check-missing.json",
                  "requires-hardware-without-gpu.json", "requires-hardware-emptied.json", "overall-pass-over-a-fail.json",
                  "declared-claimed-observed.json", "sbom-claimed-observed.json",
-                 "uncertainty-outcome-verified.json", "uncertainties-emptied.json"}
+                 "uncertainty-outcome-verified.json", "uncertainties-emptied.json", "architecture-control-chars.json"}
 
 
 def valid():

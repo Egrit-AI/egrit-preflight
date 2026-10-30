@@ -25,6 +25,10 @@ SHA_RE = re.compile(r"sha256:[0-9a-f]{64}")
 ATTESTATION_TYPE = "attestation-manifest"
 PREDICATE_KEY = "in-toto.io/predicate-type"
 MAX_ATTESTATION_FETCHES = 4
+# A registry or an image controls these names; anything else than a short lowercase token reads as not established.
+PLATFORM_WORD_RE = re.compile(r"[a-z0-9_]{1,32}")
+LABEL_KEY_RE = re.compile(r"[A-Za-z0-9._/-]{1,100}")
+MAX_LABELS = 32
 TAG_ARTIFACT_SUFFIXES = ("sbom", "att", "sig", "vex")  # REPO:sha256-<hex>.<suffix>, the sigstore tag convention
 
 
@@ -123,7 +127,8 @@ def _inspect_manifest(ref, result, checks, runner):
             break
         data = None
     if data:
-        result["architecture"] = data["Architecture"].replace("aarch64", "arm64")
+        arch = data["Architecture"]
+        result["architecture"] = arch.replace("aarch64", "arm64") if PLATFORM_WORD_RE.fullmatch(arch) else None
         if not result["digest"]:
             rd = [d.split("@")[1] for d in _list(data.get("RepoDigests")) if isinstance(d, str) and "@" in d]
             result["digest"] = rd[0] if rd and SHA_RE.fullmatch(rd[0]) else None
@@ -157,8 +162,10 @@ def _inspect_manifest(ref, result, checks, runner):
             p = mf.get("platform") if isinstance(mf, dict) else None
             if not isinstance(p, dict) or not all(isinstance(p.get(k), str) for k in ("os", "architecture")):
                 continue
-            if p["os"] and p["architecture"] and p["os"] != "unknown":
+            if (PLATFORM_WORD_RE.fullmatch(p["os"]) and PLATFORM_WORD_RE.fullmatch(p["architecture"])
+                    and p["os"] != "unknown"):
                 variant = p.get("variant") if isinstance(p.get("variant"), str) else ""
+                variant = variant if PLATFORM_WORD_RE.fullmatch(variant) else ""
                 plats.append("/".join(x for x in (p["os"], p["architecture"], variant) if x))
         result["platforms"] = sorted(set(plats))
         checks.append(o.check("image.manifest", o.PASS, "Registry manifest list inspected (nothing pulled).",
@@ -196,9 +203,9 @@ def _declared(cfg):
     deps = {k: env[k] for k in ENV_KEYS if k in env and ENV_VALUE_RE.fullmatch(env[k])}
     raw_labels = cfg.get("Labels") if isinstance(cfg.get("Labels"), dict) else {}
     labels = {k: safe.as_str(v, 100) for k, v in raw_labels.items()
-              if isinstance(k, str) and isinstance(v, str)
+              if isinstance(k, str) and isinstance(v, str) and LABEL_KEY_RE.fullmatch(k)
               and (k in OCI_LABELS or any(h in k.lower() for h in LABEL_HINTS))}
-    return {"env": deps, "labels": labels}
+    return {"env": deps, "labels": dict(sorted(labels.items())[:MAX_LABELS])}
 
 
 def _registry_config(ref, runner):
@@ -214,7 +221,7 @@ def _registry_config(ref, runner):
         entries = {k: v for k, v in doc.items() if isinstance(k, str) and isinstance(v, dict)}
         arm = [v for k, v in entries.items() if k == "linux/arm64" or k.startswith("linux/arm64/")]
         doc = arm[0] if arm else (next(iter(entries.values())) if len(entries) == 1 else None)
-    if isinstance(doc, dict) and isinstance(doc.get("architecture"), str) and doc["architecture"]:
+    if isinstance(doc, dict) and isinstance(doc.get("architecture"), str) and PLATFORM_WORD_RE.fullmatch(doc["architecture"]):
         return doc, _brief(r)
     return None, _brief(r)
 
@@ -326,8 +333,8 @@ def _tag_artifacts(ref, result, prov, checks, runner):
     verified. Writes the two checks and returns True when at least one such tag exists, else changes nothing.
     """
     digest = result.get("digest")
-    if not _is_digest(digest):
-        return False
+    if not result.get("source") or not _is_digest(digest):
+        return False  # the image itself was not found: a tag naming its digest proves nothing, and costs four timeouts
     repo = repo_name(ref)
     found = {}
     for suffix in TAG_ARTIFACT_SUFFIXES:
@@ -482,7 +489,7 @@ def _not_read(result, ref, what):
     if result["declared_dependencies"]:
         return None  # the image config was read, locally or from the registry, so "declares none" is a fact
     if result.get("source") == "registry manifest":
-        return (f"{what} not read from the registry manifest; declared dependencies are read from a local image only.",
+        return (f"{what} not read from the registry manifest, and its image config, which declares versions, could not be read.",
                 f"'docker pull --platform linux/arm64 {ref}' and run again.")
     return (f"{what} not read: the image could not be inspected (see image.manifest).",
             "Make the image inspectable locally or in its registry (see image.manifest) and run again.")
