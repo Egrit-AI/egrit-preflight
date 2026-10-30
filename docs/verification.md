@@ -59,8 +59,7 @@ anonymously, nothing pulled or run:
 
 All 15 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/41140016572. `f1887df` is the last code
 change before v0.1.0; the commit the tag points at adds only this record. The first full run, run 3 at `fb579c7` on
-2026-10-26 (10 jobs, in the private development repository), is
-https://github.com/Egrit-AI/egrit-preflight-internal/actions/runs/40331286519.
+2026-10-26 (10 jobs), was in the private development repository and is not public.
 
 - Unit tests on Ubuntu 24.04 and macOS (`macos-latest`), Python 3.9, 3.10, 3.11, 3.12 and 3.13.
 - Clean install (build, install the wheel in a fresh venv, run the CLI) on Ubuntu and macOS.
