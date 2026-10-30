@@ -1,5 +1,7 @@
 # Changelog
 
+Issue and pull request numbers in this file refer to the private development repository, not to this one.
+
 ## Unreleased
 
 - Report contract (additive, `schema_version` stays 1): new rule 11. The reference reader rejects a report whose
