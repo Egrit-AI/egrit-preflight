@@ -55,6 +55,8 @@ Expected: `[PASS] smoke.arch: linux/arm64 container ran the 'arch' test (prints 
 Where this fits in a build-to-device process, what to do with each outcome, and how to use it in CI:
 [docs/where-it-fits.md](docs/where-it-fits.md).
 The report's fields and the guarantees a program reading it can rely on: [docs/report-contract.md](docs/report-contract.md).
+What `image` establishes about an NVIDIA L4T image from its registry, and what it does not, with a real run:
+[docs/l4t-example.md](docs/l4t-example.md).
 
 ## Outcomes and exit codes
 
