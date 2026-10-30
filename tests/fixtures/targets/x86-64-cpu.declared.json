@@ -1,0 +1,16 @@
+{
+  "name": "Synthetic x86-64 CPU host (illustrative, not a real machine)",
+  "architecture": "x86_64",
+  "accelerator": "none",
+  "software": {},
+  "runtimes": {},
+  "status": "declared",
+  "sources": [
+    {
+      "what": "Synthetic description written for the design note docs/target-neutral-design.md",
+      "url": null,
+      "retrieved": "not applicable",
+      "note": "Made up for tests. Nothing in it was read from a machine."
+    }
+  ]
+}

@@ -1,0 +1,451 @@
+{
+  "checks": [
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Docker version 29.9.2, build a82e528\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.cli",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker CLI 29.9.2."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "info",
+          "--format",
+          "{{json .}}"
+        ],
+        "output_omitted": true,
+        "returncode": 0,
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.daemon",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker daemon 29.9.2 reachable."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.buildx",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker Buildx 0.38.1."
+    },
+    {
+      "detail": "mode: linux-x86_64-qemu; binfmt qemu-aarch64: enabled",
+      "evidence": "observed",
+      "id": "arm64.execution",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "x86_64 Linux with a QEMU aarch64 handler registered. A smoke test confirms it runs."
+    },
+    {
+      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.valid",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image reference is well formed."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.pinned",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Reference is pinned by digest."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "image",
+          "inspect",
+          "--platform",
+          "linux/arm64",
+          "ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"
+        ],
+        "returncode": 0
+      },
+      "evidence": "observed",
+      "id": "image.manifest",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image found locally and inspected."
+    },
+    {
+      "evidence": "observed",
+      "id": "image.architecture",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image provides linux/arm64."
+    },
+    {
+      "detail": {
+        "attestations": [
+          {
+            "attestation_manifest_digest": "sha256:a08686b5d4d50c3d2c6441e64c3eff628308b831c412ab1de5ad34cc1888cf04",
+            "predicate_types": [
+              "https://spdx.dev/Document"
+            ],
+            "subject_digest": "sha256:18b33ff3829707f31ada654a963b9ee35f2e6f0241b964bd17a22a9b330cb63d"
+          }
+        ]
+      },
+      "evidence": "declared",
+      "id": "image.sbom",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "SBOM attestation (https://spdx.dev/Document) is listed for the linux/arm64 image. Its contents and any signature were not verified; a digest fixes content, not who published it."
+    },
+    {
+      "detail": {
+        "predicate_types": [
+          "https://spdx.dev/Document"
+        ]
+      },
+      "evidence": "none",
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not found among the listed attestations."
+    },
+    {
+      "evidence": "none",
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "JetPack version not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "target.l4t",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "L4T agreement not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "CUDA version not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "TensorRT version not compared. No target record supplied (--target)."
+    },
+    {
+      "detail": "An inspected manifest or an ARM64 smoke test is not Jetson, CUDA or TensorRT compatibility.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "image",
+      "summary": "Whether this image's CUDA/TensorRT user space works on a Jetson GPU needs a physical device."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.pinned",
+      "outcome": "PASS",
+      "section": "smoke",
+      "summary": "Reference is pinned by digest."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "run",
+          "--rm",
+          "--name",
+          "egrit-preflight-beb43c14f31b",
+          "--label",
+          "egrit-preflight=1",
+          "--platform",
+          "linux/arm64",
+          "--pull",
+          "never",
+          "--runtime",
+          "runc",
+          "-e",
+          "NVIDIA_VISIBLE_DEVICES=void",
+          "--network",
+          "none",
+          "--read-only",
+          "--cap-drop",
+          "ALL",
+          "--security-opt",
+          "no-new-privileges",
+          "--pids-limit",
+          "128",
+          "--memory",
+          "512m",
+          "--memory-swap",
+          "512m",
+          "--cpus",
+          "1",
+          "--user",
+          "65534:65534",
+          "--tmpfs",
+          "/tmp:rw,noexec,nosuid,size=16m",
+          "--entrypoint",
+          "uname",
+          "ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac",
+          "-m"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "aarch64\n",
+        "timed_out": false
+      },
+      "detail": "The result is reported by the image's own binaries; only trust it for an image you trust.",
+      "evidence": "observed",
+      "id": "smoke.arch",
+      "outcome": "PASS",
+      "section": "smoke",
+      "summary": "linux/arm64 container ran the 'arch' test (prints 'aarch64')."
+    },
+    {
+      "detail": "No GPU, device node or NVIDIA runtime was used.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "smoke",
+      "summary": "A passing ARM64 CPU test is not evidence of NVIDIA CUDA, TensorRT or Jetson GPU compatibility."
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Docker version 29.9.2, build a82e528\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{json .}}"
+      ],
+      "output_omitted": true,
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "image",
+        "inspect",
+        "--platform",
+        "linux/arm64",
+        "ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "egrit-preflight-beb43c14f31b",
+        "--label",
+        "egrit-preflight=1",
+        "--platform",
+        "linux/arm64",
+        "--pull",
+        "never",
+        "--runtime",
+        "runc",
+        "-e",
+        "NVIDIA_VISIBLE_DEVICES=void",
+        "--network",
+        "none",
+        "--read-only",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges",
+        "--pids-limit",
+        "128",
+        "--memory",
+        "512m",
+        "--memory-swap",
+        "512m",
+        "--cpus",
+        "1",
+        "--user",
+        "65534:65534",
+        "--tmpfs",
+        "/tmp:rw,noexec,nosuid,size=16m",
+        "--entrypoint",
+        "uname",
+        "ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac",
+        "-m"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "aarch64\n",
+      "timed_out": false
+    }
+  ],
+  "docker": {
+    "buildx_version": "0.38.1",
+    "cli_version": "29.9.2",
+    "daemon_architecture": "x86_64",
+    "daemon_os": "linux",
+    "daemon_version": "29.9.2",
+    "docker_desktop": false
+  },
+  "hardware_verified": false,
+  "host": {
+    "architecture": "x86_64",
+    "binfmt_qemu_aarch64": "enabled",
+    "execution_mode": "linux-x86_64-qemu",
+    "os": "linux",
+    "python": "3.13.17"
+  },
+  "image": {
+    "architecture": "arm64",
+    "declared_dependencies": {
+      "env": {},
+      "labels": {
+        "org.opencontainers.image.version": "24.04"
+      }
+    },
+    "digest": "sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac",
+    "platforms": null,
+    "provenance": {
+      "arm64_manifest_digests": [
+        "sha256:18b33ff3829707f31ada654a963b9ee35f2e6f0241b964bd17a22a9b330cb63d"
+      ],
+      "attestations": [
+        {
+          "attestation_manifest_digest": "sha256:a08686b5d4d50c3d2c6441e64c3eff628308b831c412ab1de5ad34cc1888cf04",
+          "predicate_types": [
+            "https://spdx.dev/Document"
+          ],
+          "subject_digest": "sha256:18b33ff3829707f31ada654a963b9ee35f2e6f0241b964bd17a22a9b330cb63d"
+        }
+      ],
+      "errors": [],
+      "signature_verified": false,
+      "status": "listed"
+    },
+    "reference": "ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac"
+  },
+  "limitations": [
+    "ARM64 user-space emulation or a native ARM64 run is not a Jetson run.",
+    "CUDA, TensorRT, the NVIDIA driver, device nodes and GPU performance are not tested.",
+    "Declared versions (target records, image tags and labels) are not observed on a device.",
+    "A mocked or emulated result is never hardware verification."
+  ],
+  "overall": "UNKNOWN",
+  "provenance": {
+    "generated_by": "egrit-preflight 0.1.0",
+    "inputs": {
+      "image_reference": "ubuntu@sha256:68ee22004a9109b44973313b02ff7b1de250f1de0f5ecb628d73f579aaff33ac",
+      "target_record_sha256": null
+    },
+    "python": "3.13.17",
+    "smoke_executed": true,
+    "telemetry": "none; this tool sends nothing anywhere"
+  },
+  "requires_hardware": [
+    "jetson.gpu"
+  ],
+  "schema_version": "1",
+  "target": {
+    "architecture": "linux/arm64",
+    "record": null
+  },
+  "timestamp": "2026-10-26T07:33:20Z",
+  "tool": {
+    "name": "egrit-preflight",
+    "version": "0.1.0"
+  },
+  "uncertainties": [
+    {
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not found among the listed attestations."
+    },
+    {
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "JetPack version not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "target.l4t",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "L4T agreement not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "CUDA version not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "TensorRT version not compared. No target record supplied (--target)."
+    }
+  ]
+}

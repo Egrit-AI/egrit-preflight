@@ -1,0 +1,15 @@
+{
+  "checks": [
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Docker version 27.0.1, build abc\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker

@@ -1,0 +1,21 @@
+{
+  "name": "Jetson Orin Nano 8GB developer kit, JetPack 6.2 (declared, not read from a device)",
+  "architecture": "aarch64",
+  "software": {
+    "jetpack": "6.2",
+    "jetson_linux": "36.4.3"
+  },
+  "runtimes": {
+    "cuda": "12.6",
+    "tensorrt": "10.3"
+  },
+  "status": "declared",
+  "sources": [
+    {
+      "what": "JetPack 6.2 release notes: CUDA 12.6, TensorRT 10.3, Jetson Linux 36.4.3",
+      "url": "https://developer.nvidia.com/embedded/jetpack",
+      "retrieved": "not re-checked",
+      "note": "Replace with the NVIDIA JetPack 6.2 release notes URL and retrieval date after checking, or with values read from your device (cat /etc/nv_tegra_release)."
+    }
+  ]
+}

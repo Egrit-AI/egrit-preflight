@@ -1,0 +1,36 @@
+{
+  "document": "egrit-preflight target assessment",
+  "assessment_version": "draft",
+  "design_only": true,
+  "hardware_verified": false,
+  "target": {
+    "description": "Synthetic x86-64 CPU host (illustrative, not a real machine)",
+    "architecture": "linux/amd64",
+    "accelerator": "none",
+    "status": "declared"
+  },
+  "arm64_report": {
+    "applies_to_target": "no",
+    "reason": "A schema version 1 report checks linux/arm64 only. Its PASS says nothing about linux/amd64."
+  },
+  "checks": [
+    {
+      "id": "target.architecture",
+      "outcome": "UNKNOWN",
+      "evidence": "declared",
+      "summary": "Target declares linux/amd64. Declared, not read from a machine."
+    },
+    {
+      "id": "image.architecture",
+      "outcome": "UNKNOWN",
+      "evidence": "none",
+      "summary": "Whether the image provides linux/amd64 was not checked."
+    },
+    {
+      "id": "smoke.arch",
+      "outcome": "UNKNOWN",
+      "evidence": "none",
+      "summary": "No linux/amd64 container was run."
+    }
+  ]
+}

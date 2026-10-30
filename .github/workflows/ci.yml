@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: unit (${{ matrix.os }}, python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # ubuntu-24.04, not ubuntu-latest: setup-python has no Python 3.9 build for the newer ubuntu-latest image.
+        os: [ubuntu-24.04, macos-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Unit tests (mocked Docker; not hardware verification)
+        run: PYTHONPATH=src python -m unittest discover -s tests -t . -v
+
+  clean-install:
+    name: clean install (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Build, install the wheel in an isolated venv, run the CLI
+        run: |
+          python -m pip install build==1.2.2
+          python -m build
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          cd /tmp
+          /tmp/clean/bin/egrit-preflight --version
+          /tmp/clean/bin/egrit-preflight doctor || test $? -le 1
+          /tmp/clean/bin/egrit-preflight doctor --json | python -c "import json,sys; d=json.load(sys.stdin); assert d['schema_version']=='1'"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: dist
+          path: dist/
+
+  assurance:
+    # Independent checks over the shipped report reader (PF-1 to PF-4): Hypothesis, an exhaustive enumeration,
+    # a mutant runner and CrossHair over Z3. Dev-only tools from assurance/requirements.txt; the package stays
+    # standard-library only. Non-blocking until the owner makes it a required check.
+    name: assurance (PF-1 to PF-4, non-blocking)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r assurance/requirements.txt
+      - name: Run every check (expected failures are the pinned defects; see docs/assurance/properties.md)
+        run: HYPOTHESIS_PROFILE=ci bash assurance/run.sh 2>&1 | tee assurance-run.log
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: assurance-run-log
+          path: assurance-run.log
+
+  arm64-smoke:
+    # Real linux/arm64 container execution. x86_64 uses QEMU; the arm runner is native.
+    name: real ARM64 smoke (${{ matrix.label }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {label: "x86_64 + QEMU", runner: ubuntu-latest, qemu: true}
+          - {label: "native arm64", runner: ubuntu-24.04-arm, qemu: false}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Register QEMU (CI only; this tool never does this itself)
+        if: matrix.qemu
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        with:
+          platforms: arm64
+      - run: pip install .
+      - name: doctor
+        run: egrit-preflight doctor
+      - name: Resolve and pin ubuntu:24.04
+        id: pin
+        run: |
+          d=$(docker buildx imagetools inspect ubuntu:24.04 --format '{{.Manifest.Digest}}')
+          echo "ref=ubuntu@${d}" >> "$GITHUB_OUTPUT"
+      - name: Smoke test and report
+        run: |
+          egrit-preflight report --json --image "${{ steps.pin.outputs.ref }}" --smoke --pull --yes -o report.json
+      - name: Python-import smoke test on a pinned python image
+        run: |
+          d=$(docker buildx imagetools inspect python:3.13-slim --format '{{.Manifest.Digest}}')
+          egrit-preflight smoke --image "python@${d}" --pull --test python-import --module os.path --yes --json > python-import.json
+          python - <<'PY'
+          import json
+          r = json.load(open("python-import.json"))
+          c = {x["id"]: x for x in r["checks"]}
+          assert c["smoke.python-import"]["outcome"] == "PASS", c["smoke.python-import"]
+          assert c["smoke.python-import"]["command"]["stdout"].strip() == "imported os.path"
+          assert c["jetson.gpu"]["outcome"] == "REQUIRES_HARDWARE"
+          print("python-import on linux/arm64 verified;", r["image"]["digest"])
+          PY
+      - name: Assert a real ARM64 execution passed
+        run: |
+          python - <<'PY'
+          import json
+          r = json.load(open("report.json"))
+          c = {x["id"]: x for x in r["checks"]}
+          assert c["smoke.arch"]["outcome"] == "PASS", c["smoke.arch"]
+          assert c["smoke.arch"]["command"]["stdout"].strip() == "aarch64"
+          assert c["jetson.gpu"]["outcome"] == "REQUIRES_HARDWARE"
+          assert r["provenance"]["smoke_executed"] is True
+          print("real linux/arm64 execution verified;", r["image"]["digest"])
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: report-${{ matrix.runner }}
+          path: |
+            report.json
+            python-import.json

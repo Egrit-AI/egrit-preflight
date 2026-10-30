@@ -1,0 +1,71 @@
+# Changelog
+
+## Unreleased
+
+- Report contract (additive, `schema_version` stays 1): new rule 11. The reference reader rejects a report whose
+  `checks` is empty, one with no `jetson.gpu` check, and one whose `requires_hardware` leaves out `jetson.gpu`. Before,
+  `checks: []` with `overall: PASS` was accepted: a report that checked nothing read as a clean pass. A
+  `requires_hardware` without `jetson.gpu` was already rejected by rule 3 whenever the check is present; the new rule
+  gives it a clearer message. Three new
+  invalid fixtures, `checks-empty.json`, `gpu-check-missing.json` and `requires-hardware-without-gpu.json` (6 valid,
+  29 invalid); the schema alone accepts all three. Every report the tool writes is still accepted (#45, from #33
+  rule 2).
+- Report contract (additive, `schema_version` stays 1): rule 2 now also requires every `jetson.gpu` check to carry
+  `evidence: "none"`, the only value the writer emits. Before, a `jetson.gpu` check marked `observed` or `declared`
+  was accepted and could read as GPU evidence. One new invalid fixture, `gpu-check-observed.json` (6 valid, 26
+  invalid); the schema alone accepts it. Every report the tool writes is still accepted (#44, from #33 rule 1).
+- Report contract (additive, `schema_version` stays 1): `load_report` no longer raises `UnicodeEncodeError` on text
+  holding a lone surrogate; it returns `(None, ["report is not valid UTF-8 text"])`, as for any other unreadable
+  input. Bytes input was already unaffected, and no valid report is affected. The PF-2 generator now includes such
+  text (#39, found by the independent review of #37).
+- Report contract (additive, `schema_version` stays 1): new rule 10. Additive in the sense the earlier rules 2 to 6
+  are: the reference reader is tightened beyond the schema and nothing the writer emits changes. The reference reader `check_report` now validates each
+  `uncertainties` entry (an object with a valid `id`, a `section`, a `summary`, and an `outcome` of `UNKNOWN` or
+  `REQUIRES_HARDWARE`) and requires the entries to list each `UNKNOWN` and `REQUIRES_HARDWARE` check once per id and
+  outcome. Before, any entry was accepted and `allowlisted_view` exported its `outcome`, so a word such as `VERIFIED`
+  reached a consumer. Two new invalid fixtures, `uncertainty-outcome-verified.json` and `uncertainties-emptied.json`
+  (6 valid, 25 invalid); both pass the schema alone, which requires only the four keys. Every report the tool writes
+  is still accepted; a hand-made report whose `uncertainties` disagree with its checks is now rejected (#32, found by
+  the PF-4 property check).
+- Report contract (additive, `schema_version` stays 1): the reference reader `check_report`, and so `load_report`, no
+  longer raises `TypeError` on a check whose `outcome` is a list or object, or on a `requires_hardware` holding a
+  non-string; both now return a rejection (`outcome must be one of ...`, `requires_hardware must be an array of
+  strings`), as rules 1 to 5 of "Reading a report" promise. Two new invalid fixtures, `outcome-not-a-string.json` and
+  `requires-hardware-not-strings.json` (6 valid, 23 invalid). The schema already rejected both shapes, so no report
+  the schema accepts is rejected (#31, found by the PF-2 property check).
+- Docs: [design note](docs/target-neutral-design.md) on targets other than an ARM64 Jetson. Report `schema_version` 1
+  is unchanged and an ARM64 `PASS` is never read as an x86-64 or Jetson GPU result. Synthetic x86-64 CPU and Jetson
+  target descriptions in `tests/fixtures/targets/`, tested offline. No change to the tool or the report.
+- `image` and `report`: a `--target` record's `architecture` is now compared. Anything but `aarch64` or `arm64` gives a
+  new check `target.architecture`, `FAIL` graded `declared`, because the report is about linux/arm64 only; `aarch64`
+  or `arm64` gives `PASS` graded `declared`; an absent architecture adds no check.
+- Report contract (additive, `schema_version` stays 1): new check id `target.architecture`. The reference reader
+  `check_report` now rejects a `target.architecture` other than `linux/arm64`, which the schema already required (rule
+  9), with a new invalid fixture `target-architecture-not-arm64.json` (6 valid, 21 invalid). No report the schema
+  accepts is rejected.
+
+## 0.1.0 (2026-10-26)
+
+First release. Standard library only, Python 3.9 or later, Apache-2.0.
+
+- `doctor`: host, Docker, Buildx and the ARM64 route (Linux x86_64 with QEMU, native Linux ARM64, Intel Mac emulation,
+  Apple Silicon). Read-only; never registers QEMU for you.
+- `image`: architecture, digest, declared CUDA/TensorRT/L4T versions and SBOM/provenance attestations the registry lists,
+  compared with an optional target record. Reads manifests only; missing data is `UNKNOWN`.
+- `smoke`: one allowlisted CPU-only linux/arm64 test (`arch`, `os-release`, `python-import`) in a locked-down container,
+  only with `--yes`, only for a digest-pinned image unless told otherwise.
+- `report`: one JSON document with a schema; reproducible under `SOURCE_DATE_EPOCH`.
+- Outcomes are `PASS`, `FAIL`, `UNKNOWN` and `REQUIRES_HARDWARE`. A passing ARM64 test is never reported as CUDA,
+  TensorRT or Jetson GPU compatibility.
+- No account, no telemetry, no network connections of its own.
+- Report contract (`schema_version` 1): documented in [docs/report-contract.md](docs/report-contract.md), with a stricter
+  schema, a reference reader (`egrit_preflight.contract`), a consumer allowlist, 6 valid and 20 invalid fixtures, and a
+  compatibility policy. The report gains `hardware_verified`, always `false`, so a `PASS` in `overall` cannot be read as a
+  device result.
+
+Security: an independent AI review found twelve issues (raw `docker info` in reports, writable image volumes, unbounded
+output capture, terminal escape sequences, crashes on malformed input, among others). All are fixed and tested; see
+[docs/security.md](docs/security.md).
+
+Not verified: any real Jetson; Docker Desktop on macOS; rootless Docker; a daemon whose default runtime is `nvidia`;
+any NVIDIA image. Not on PyPI yet: install from source.

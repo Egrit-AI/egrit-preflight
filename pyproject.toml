@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "egrit-preflight"
+dynamic = ["version"]
+description = "Free, open-source ARM64 container preflight checks for NVIDIA Jetson and edge AI development."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "Apache-2.0"}
+authors = [{name = "Neul Space Ltd"}]
+keywords = ["arm64", "jetson", "docker", "buildx", "qemu", "edge-ai", "preflight"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = []
+
+[project.scripts]
+egrit-preflight = "egrit_preflight.__main__:run"
+
+[tool.setuptools.dynamic]
+version = {attr = "egrit_preflight.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.urls]
+Source = "https://github.com/Egrit-AI/egrit-preflight"
+Issues = "https://github.com/Egrit-AI/egrit-preflight/issues"

@@ -1,0 +1,325 @@
+{
+  "checks": [
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Docker version 27.0.1, build abc\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.cli",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker CLI 27.0.1."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "info",
+          "--format",
+          "{{json .}}"
+        ],
+        "output_omitted": true,
+        "returncode": 0,
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.daemon",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker daemon 27.0.1 reachable."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "github.com/docker/buildx v0.15.1 abc\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.buildx",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker Buildx 0.15.1."
+    },
+    {
+      "detail": "mode: linux-x86_64-qemu; binfmt qemu-aarch64: enabled",
+      "evidence": "observed",
+      "id": "arm64.execution",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "x86_64 Linux with a QEMU aarch64 handler registered. A smoke test confirms it runs."
+    },
+    {
+      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.valid",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image reference is well formed."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.pinned",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Reference is pinned by digest."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "imagetools",
+          "inspect",
+          "--raw",
+          "example.com/app@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        ],
+        "returncode": 1
+      },
+      "detail": "registry unreachable",
+      "evidence": "none",
+      "id": "image.manifest",
+      "outcome": "UNKNOWN",
+      "remediation": "Check the reference, your network and registry login; or 'docker pull --platform linux/arm64 example.com/app@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc' and run again.",
+      "section": "image",
+      "summary": "Image could not be inspected locally or in its registry."
+    },
+    {
+      "evidence": "none",
+      "id": "image.architecture",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Architecture not established."
+    },
+    {
+      "evidence": "none",
+      "id": "image.sbom",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "SBOM attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "evidence": "none",
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "evidence": "none",
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "JetPack version not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "target.l4t",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "L4T agreement not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "CUDA version not compared. No target record supplied (--target)."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "TensorRT version not compared. No target record supplied (--target)."
+    },
+    {
+      "detail": "An inspected manifest or an ARM64 smoke test is not Jetson, CUDA or TensorRT compatibility.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "image",
+      "summary": "Whether this image's CUDA/TensorRT user space works on a Jetson GPU needs a physical device."
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Docker version 27.0.1, build abc\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{json .}}"
+      ],
+      "output_omitted": true,
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "github.com/docker/buildx v0.15.1 abc\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "imagetools",
+        "inspect",
+        "--raw",
+        "example.com/app@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "returncode": 1
+    }
+  ],
+  "docker": {
+    "buildx_version": "0.15.1",
+    "cli_version": "27.0.1",
+    "daemon_architecture": "x86_64",
+    "daemon_os": "linux",
+    "daemon_version": "27.0.1",
+    "docker_desktop": false
+  },
+  "hardware_verified": false,
+  "host": {
+    "architecture": "x86_64",
+    "binfmt_qemu_aarch64": "enabled",
+    "execution_mode": "linux-x86_64-qemu",
+    "os": "linux",
+    "python": "3.12.0"
+  },
+  "image": {
+    "architecture": null,
+    "declared_dependencies": {},
+    "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "platforms": null,
+    "provenance": {
+      "arm64_manifest_digests": [],
+      "attestations": [],
+      "errors": [],
+      "signature_verified": false,
+      "status": "no-manifest-list"
+    },
+    "reference": "example.com/app@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "limitations": [
+    "ARM64 user-space emulation or a native ARM64 run is not a Jetson run.",
+    "CUDA, TensorRT, the NVIDIA driver, device nodes and GPU performance are not tested.",
+    "Declared versions (target records, image tags and labels) are not observed on a device.",
+    "A mocked or emulated result is never hardware verification."
+  ],
+  "overall": "UNKNOWN",
+  "provenance": {
+    "generated_by": "egrit-preflight 0.1.0",
+    "inputs": {
+      "image_reference": "example.com/app@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "target_record_sha256": null
+    },
+    "python": "3.12.0",
+    "smoke_executed": false,
+    "telemetry": "none; this tool sends nothing anywhere"
+  },
+  "requires_hardware": [
+    "jetson.gpu"
+  ],
+  "schema_version": "1",
+  "target": {
+    "architecture": "linux/arm64",
+    "record": null
+  },
+  "timestamp": "2026-10-26T07:33:20Z",
+  "tool": {
+    "name": "egrit-preflight",
+    "version": "0.1.0"
+  },
+  "uncertainties": [
+    {
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "id": "image.manifest",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Image could not be inspected locally or in its registry."
+    },
+    {
+      "id": "image.architecture",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Architecture not established."
+    },
+    {
+      "id": "image.sbom",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "SBOM attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "JetPack version not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "target.l4t",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "L4T agreement not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "CUDA version not compared. No target record supplied (--target)."
+    },
+    {
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "TensorRT version not compared. No target record supplied (--target)."
+    }
+  ]
+}

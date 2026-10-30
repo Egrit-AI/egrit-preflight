@@ -1,0 +1,30 @@
+{
+  "document": "egrit-preflight target assessment",
+  "assessment_version": "draft",
+  "design_only": true,
+  "hardware_verified": false,
+  "target": {
+    "description": "Synthetic Jetson module (declared, not read from a device)",
+    "architecture": "linux/arm64",
+    "accelerator": "jetson-gpu",
+    "status": "declared"
+  },
+  "arm64_report": {
+    "applies_to_target": "cpu-user-space-only",
+    "reason": "A schema version 1 report covers linux/arm64 CPU user space. Its PASS is not a Jetson GPU, CUDA or TensorRT result."
+  },
+  "checks": [
+    {
+      "id": "target.jetpack",
+      "outcome": "UNKNOWN",
+      "evidence": "none",
+      "summary": "Target record does not state a JetPack version."
+    },
+    {
+      "id": "accelerator.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "evidence": "none",
+      "summary": "The Jetson GPU, driver and device nodes need a physical device."
+    }
+  ]
+}

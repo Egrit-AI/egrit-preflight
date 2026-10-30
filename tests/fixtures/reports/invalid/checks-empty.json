@@ -1,0 +1,167 @@
+{
+  "checks": [],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Docker version 27.0.1, build abc\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{json .}}"
+      ],
+      "output_omitted": true,
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "github.com/docker/buildx v0.15.1 abc\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "image",
+        "inspect",
+        "example.com/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "egrit-preflight-000000000000",
+        "--label",
+        "egrit-preflight=1",
+        "--platform",
+        "linux/arm64",
+        "--pull",
+        "never",
+        "--runtime",
+        "runc",
+        "-e",
+        "NVIDIA_VISIBLE_DEVICES=void",
+        "--network",
+        "none",
+        "--read-only",
+        "--cap-drop",
+        "ALL",
+        "--security-opt",
+        "no-new-privileges",
+        "--pids-limit",
+        "128",
+        "--memory",
+        "512m",
+        "--memory-swap",
+        "512m",
+        "--cpus",
+        "1",
+        "--user",
+        "65534:65534",
+        "--tmpfs",
+        "/tmp:rw,noexec,nosuid,size=16m",
+        "--entrypoint",
+        "uname",
+        "example.com/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "-m"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "aarch64\n",
+      "timed_out": false
+    }
+  ],
+  "docker": {
+    "buildx_version": "0.15.1",
+    "cli_version": "27.0.1",
+    "daemon_architecture": "arm64",
+    "daemon_os": "linux",
+    "daemon_version": "27.0.1",
+    "docker_desktop": true
+  },
+  "hardware_verified": false,
+  "host": {
+    "architecture": "arm64",
+    "binfmt_qemu_aarch64": "absent",
+    "execution_mode": "linux-arm64-native",
+    "os": "linux",
+    "python": "3.12.0"
+  },
+  "image": {
+    "architecture": "arm64",
+    "declared_dependencies": {
+      "env": {},
+      "labels": {
+        "org.opencontainers.image.version": "1"
+      }
+    },
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "platforms": null,
+    "provenance": {
+      "arm64_manifest_digests": [
+        "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+      ],
+      "attestations": [
+        {
+          "attestation_manifest_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "predicate_types": [
+            "https://slsa.dev/provenance/v0.2",
+            "https://spdx.dev/Document"
+          ],
+          "subject_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+        }
+      ],
+      "errors": [],
+      "signature_verified": false,
+      "status": "listed"
+    },
+    "reference": "example.com/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "limitations": [
+    "ARM64 user-space emulation or a native ARM64 run is not a Jetson run.",
+    "CUDA, TensorRT, the NVIDIA driver, device nodes and GPU performance are not tested.",
+    "Declared versions (target records, image tags and labels) are not observed on a device.",
+    "A mocked or emulated result is never hardware verification."
+  ],
+  "overall": "PASS",
+  "provenance": {
+    "generated_by": "egrit-preflight 0.1.0",
+    "inputs": {
+      "image_reference": "example.com/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "target_record_sha256": null
+    },
+    "python": "3.12.0",
+    "smoke_executed": true,
+    "telemetry": "none; this tool sends nothing anywhere"
+  },
+  "requires_hardware": [],
+  "schema_version": "1",
+  "target": {
+    "architecture": "linux/arm64",
+    "record": null
+  },
+  "timestamp": "2026-10-26T07:33:20Z",
+  "tool": {
+    "name": "egrit-preflight",
+    "version": "0.1.0"
+  },
+  "uncertainties": []
+}

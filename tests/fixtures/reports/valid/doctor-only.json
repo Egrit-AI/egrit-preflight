@@ -1,0 +1,162 @@
+{
+  "checks": [
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Docker version 27.0.1, build abc\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.cli",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker CLI 27.0.1."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "info",
+          "--format",
+          "{{json .}}"
+        ],
+        "output_omitted": true,
+        "returncode": 0,
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.daemon",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker daemon 27.0.1 reachable."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "github.com/docker/buildx v0.15.1 abc\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.buildx",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker Buildx 0.15.1."
+    },
+    {
+      "detail": "mode: macos-apple-silicon-vm",
+      "evidence": "observed",
+      "id": "arm64.execution",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Apple Silicon: linux/arm64 containers run in Docker's Linux VM, without x86 emulation."
+    },
+    {
+      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Docker version 27.0.1, build abc\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{json .}}"
+      ],
+      "output_omitted": true,
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "github.com/docker/buildx v0.15.1 abc\n",
+      "timed_out": false
+    }
+  ],
+  "docker": {
+    "buildx_version": "0.15.1",
+    "cli_version": "27.0.1",
+    "daemon_architecture": "arm64",
+    "daemon_os": "linux",
+    "daemon_version": "27.0.1",
+    "docker_desktop": true
+  },
+  "hardware_verified": false,
+  "host": {
+    "architecture": "arm64",
+    "binfmt_qemu_aarch64": null,
+    "execution_mode": "macos-apple-silicon-vm",
+    "os": "darwin",
+    "python": "3.12.0"
+  },
+  "image": null,
+  "limitations": [
+    "ARM64 user-space emulation or a native ARM64 run is not a Jetson run.",
+    "CUDA, TensorRT, the NVIDIA driver, device nodes and GPU performance are not tested.",
+    "Declared versions (target records, image tags and labels) are not observed on a device.",
+    "A mocked or emulated result is never hardware verification."
+  ],
+  "overall": "PASS",
+  "provenance": {
+    "generated_by": "egrit-preflight 0.1.0",
+    "inputs": {
+      "image_reference": null,
+      "target_record_sha256": null
+    },
+    "python": "3.12.0",
+    "smoke_executed": false,
+    "telemetry": "none; this tool sends nothing anywhere"
+  },
+  "requires_hardware": [
+    "jetson.gpu"
+  ],
+  "schema_version": "1",
+  "target": {
+    "architecture": "linux/arm64",
+    "record": null
+  },
+  "timestamp": "2026-10-26T07:33:20Z",
+  "tool": {
+    "name": "egrit-preflight",
+    "version": "0.1.0"
+  },
+  "uncertainties": [
+    {
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    }
+  ]
+}

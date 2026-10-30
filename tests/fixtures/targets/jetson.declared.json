@@ -1,0 +1,22 @@
+{
+  "name": "Synthetic Jetson module (declared, not read from a device)",
+  "architecture": "aarch64",
+  "accelerator": "jetson-gpu",
+  "software": {
+    "jetpack": "not established",
+    "jetson_linux": "not established"
+  },
+  "runtimes": {
+    "cuda": "not established",
+    "tensorrt": "not established"
+  },
+  "status": "declared",
+  "sources": [
+    {
+      "what": "Synthetic description written for the design note docs/target-neutral-design.md",
+      "url": null,
+      "retrieved": "not applicable",
+      "note": "Made up for tests. No version is claimed, so every version check stays UNKNOWN."
+    }
+  ]
+}
