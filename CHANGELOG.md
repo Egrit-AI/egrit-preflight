@@ -11,6 +11,12 @@ repository; entries after it refer to this repository.
   there (declared dependencies come from a local image only) and give the `docker pull --platform linux/arm64`
   command, instead of "Image declares no CUDA version" from a path that never read the image. Text and
   `remediation` only: no new check id, no outcome changes. Fixtures regenerated (#9, public repository).
+- `image`: for a single-platform registry manifest (NVIDIA's L4T images), the image config is now read with
+  `docker buildx imagetools inspect --format '{{json .Image}}'`, a small JSON document and not a layer, so
+  `image.architecture` is PASS or FAIL (observed) and the declared CUDA, TensorRT and L4T versions are reported as
+  the local path reports them. When the config cannot be read, `image.architecture` stays UNKNOWN with its
+  remediation. Nothing is pulled; `jetson.gpu` stays REQUIRES_HARDWARE. Not yet run against a real registry
+  (`docs/verification.md`) (#7, public repository).
 - Report contract (additive, `schema_version` stays 1): new rule 11. The reference reader rejects a report whose
   `checks` is empty, one with no `jetson.gpu` check, and one whose `requires_hardware` leaves out `jetson.gpu`. Before,
   `checks: []` with `overall: PASS` was accepted: a report that checked nothing read as a clean pass. A

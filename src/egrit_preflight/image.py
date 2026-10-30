@@ -126,14 +126,7 @@ def _inspect_manifest(ref, result, checks, runner):
         if not result["digest"]:
             rd = [d.split("@")[1] for d in _list(data.get("RepoDigests")) if isinstance(d, str) and "@" in d]
             result["digest"] = rd[0] if rd and SHA_RE.fullmatch(rd[0]) else None
-        cfg = data.get("Config") if isinstance(data.get("Config"), dict) else {}
-        env = dict(e.split("=", 1) for e in _list(cfg.get("Env")) if isinstance(e, str) and "=" in e)
-        deps = {k: env[k] for k in ENV_KEYS if k in env and ENV_VALUE_RE.fullmatch(env[k])}
-        raw_labels = cfg.get("Labels") if isinstance(cfg.get("Labels"), dict) else {}
-        labels = {k: safe.as_str(v, 100) for k, v in raw_labels.items()
-                  if isinstance(k, str) and isinstance(v, str)
-                  and (k in OCI_LABELS or any(h in k.lower() for h in LABEL_HINTS))}
-        result["declared_dependencies"] = {"env": deps, "labels": labels}
+        result["declared_dependencies"] = _declared(data.get("Config"))
         result["source"] = "local image"
         checks.append(o.check("image.manifest", o.PASS, "Image found locally and inspected.",
                               evidence=o.OBSERVED, command=_brief(r)))
@@ -175,12 +168,54 @@ def _inspect_manifest(ref, result, checks, runner):
             result["architecture"] = "no-arm64-variant"
         _arch_check(result, checks)
     else:
-        checks.append(o.check("image.manifest", o.PASS, "Single-platform manifest inspected (nothing pulled).",
-                              evidence=o.OBSERVED, command=_brief(r2)))
-        checks.append(o.check("image.architecture", o.UNKNOWN,
-                              "Single-platform manifest does not state its architecture here.",
-                              remediation="Pull it with --platform linux/arm64 and inspect it locally."))
+        # NVIDIA's L4T images are single-platform: the manifest names no architecture, its config does.
+        cfg, cmd = _registry_config(ref, runner)
+        if cfg:
+            checks.append(o.check("image.manifest", o.PASS,
+                                  "Single-platform manifest and its image config inspected (nothing pulled).",
+                                  evidence=o.OBSERVED, command=cmd))
+            result["architecture"] = cfg["architecture"].replace("aarch64", "arm64")
+            result["declared_dependencies"] = _declared(cfg.get("config"))
+            _arch_check(result, checks)
+        else:
+            checks.append(o.check("image.manifest", o.PASS, "Single-platform manifest inspected (nothing pulled).",
+                                  evidence=o.OBSERVED, command=_brief(r2)))
+            checks.append(o.check("image.architecture", o.UNKNOWN,
+                                  "Single-platform manifest does not state its architecture here, and its image "
+                                  "config could not be read.",
+                                  remediation="Pull it with --platform linux/arm64 and inspect it locally.",
+                                  command=cmd))
     return doc if isinstance(doc, dict) else None
+
+
+def _declared(cfg):
+    """Version-bearing env entries and labels from an image config's Config section (local or OCI shape)."""
+    cfg = cfg if isinstance(cfg, dict) else {}
+    env = dict(e.split("=", 1) for e in _list(cfg.get("Env")) if isinstance(e, str) and "=" in e)
+    deps = {k: env[k] for k in ENV_KEYS if k in env and ENV_VALUE_RE.fullmatch(env[k])}
+    raw_labels = cfg.get("Labels") if isinstance(cfg.get("Labels"), dict) else {}
+    labels = {k: safe.as_str(v, 100) for k, v in raw_labels.items()
+              if isinstance(k, str) and isinstance(v, str)
+              and (k in OCI_LABELS or any(h in k.lower() for h in LABEL_HINTS))}
+    return {"env": deps, "labels": labels}
+
+
+def _registry_config(ref, runner):
+    """The image config a registry manifest points to: a small JSON document, not a layer. Nothing is pulled.
+
+    `docker buildx imagetools inspect --format '{{json .Image}}'` prints the OCI config (architecture, os,
+    config.Env, config.Labels). When it prints a map keyed by platform instead, the linux/arm64 entry is taken, or
+    the only entry. Returns (config, command), with config None when nothing usable came back.
+    """
+    r = runner(["docker", "buildx", "imagetools", "inspect", "--format", "{{json .Image}}", ref], 60)
+    doc = safe.loads(r.stdout) if r.returncode == 0 else None
+    if isinstance(doc, dict) and not isinstance(doc.get("architecture"), str):
+        entries = {k: v for k, v in doc.items() if isinstance(k, str) and isinstance(v, dict)}
+        arm = [v for k, v in entries.items() if k == "linux/arm64" or k.startswith("linux/arm64/")]
+        doc = arm[0] if arm else (next(iter(entries.values())) if len(entries) == 1 else None)
+    if isinstance(doc, dict) and isinstance(doc.get("architecture"), str) and doc["architecture"]:
+        return doc, _brief(r)
+    return None, _brief(r)
 
 
 def repo_name(ref):
