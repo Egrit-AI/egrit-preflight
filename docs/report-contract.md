@@ -10,7 +10,7 @@ account or a network: the contract is a schema, a reference reader and a set of 
 |---|---|
 | Schema | [`schema/report.schema.json`](../schema/report.schema.json) (JSON Schema 2020-12) |
 | Reference reader | [`src/egrit_preflight/contract.py`](../src/egrit_preflight/contract.py) (standard library only) |
-| Fixtures | [`tests/fixtures/reports/`](../tests/fixtures/reports/): 6 valid, 29 invalid |
+| Fixtures | [`tests/fixtures/reports/`](../tests/fixtures/reports/): 6 valid, 30 invalid |
 | Example | [`docs/example-report.json`](example-report.json), a real run |
 
 ## What a report says, and what it does not
@@ -97,6 +97,10 @@ Use `section` and `id` together when you need to tell them apart.
     the check was first seen in; it and `summary` are checked for shape, not against the check.
 11. `checks` is not empty, it includes a `jetson.gpu` check, and `requires_hardware` includes `jetson.gpu`. A report
     that checked nothing, or left out the check it cannot run, never reads as a clean `PASS`.
+12. The image names a registry controls and the allowlist below exports are short tokens: `image.architecture` is
+    `null` or 1 to 32 of `a-z0-9_-`; each `image.platforms` entry is `os/architecture[/variant]` of such tokens; each
+    attestation's `predicate_types` entry is 1 to 200 printable ASCII characters without spaces. A report with an
+    escape sequence, a bidi override or an oversized value there is rejected.
 
 ## What a consumer may import
 
@@ -117,8 +121,9 @@ A consumer should import only this allowlist and drop everything else:
 - for each check: `id`, `section`, `outcome`, `evidence`, `summary`; for each uncertainty: the same minus `evidence`
 - `provenance.smoke_executed`
 
-`contract.allowlisted_view(report)` returns exactly this and refuses an invalid report. `image.reference` is text you
-typed and `summary` is generated from checks, so a consumer should still escape both when showing them.
+`contract.allowlisted_view(report)` returns exactly this and refuses an invalid report. The registry-controlled names in
+it are checked by rule 12. `image.reference` is text you typed and `summary` is generated from checks, so a consumer
+should still escape both when showing them.
 
 ## Changing the contract
 
@@ -152,9 +157,10 @@ Every file in `invalid/` must be rejected as a whole, and the file name says why
 `target-architecture-not-arm64`, and so on). The fixtures are real output of the tool run against a scripted Docker
 with a fixed clock; the hosts, versions and digests are made up.
 
-Eleven of the invalid fixtures (`gpu-check-pass`, `gpu-check-observed`, `checks-empty`, `gpu-check-missing`,
+Twelve of the invalid fixtures (`gpu-check-pass`, `gpu-check-observed`, `checks-empty`, `gpu-check-missing`,
 `requires-hardware-without-gpu`, `requires-hardware-emptied`, `overall-pass-over-a-fail`,
-`declared-claimed-observed`, `sbom-claimed-observed`, `uncertainty-outcome-verified`, `uncertainties-emptied`) are
+`declared-claimed-observed`, `sbom-claimed-observed`, `uncertainty-outcome-verified`, `uncertainties-emptied`,
+`architecture-control-chars`) are
 accepted by the schema alone, because the rules behind them
 cannot be written in JSON Schema. A consumer that validates against the schema only will accept them: apply the rules
 above as well.

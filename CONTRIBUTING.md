@@ -31,7 +31,8 @@ git tag -a vX.Y.Z -m "Egrit-Preflight vX.Y.Z"
 git push origin vX.Y.Z
 ```
 
-The workflow runs the unit tests, builds the wheel and sdist, installs the wheel in a clean venv, and publishes the
-GitHub release with the notes and both files attached. Tags are protected by a ruleset once the maintainer has
-created it, so a tag cannot be moved or deleted afterwards. Publishing to PyPI is a separate step that needs the
+The workflow refuses a tag that is not on `main`, runs the unit tests, builds the wheel and sdist with the build backend
+pinned in `.github/release-constraints.txt`, installs the wheel in a clean venv, and then, in a separate job that runs
+no build code, publishes the GitHub release with the notes and both files attached. Create the `v*` tag ruleset before
+the first tag, so a tag cannot be moved or deleted afterwards. Publishing to PyPI is a separate step that needs the
 trusted publisher to exist first.

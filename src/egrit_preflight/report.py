@@ -84,4 +84,5 @@ def build_report(doctor, image=None, smoke=None, target_path=None, env=os.enviro
 
 
 def dumps(report):
-    return json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    # ASCII only: every control character, C1 code and bidi override is escaped, so `cat report.json` is inert.
+    return json.dumps(report, indent=2, sort_keys=True, ensure_ascii=True) + "\n"

@@ -193,6 +193,7 @@ def _invariants(doc, checks):
         problems.append("checks must include jetson.gpu: every report lists the GPU check it cannot run")
     if isinstance(listed, list) and all(isinstance(x, str) for x in listed) and "jetson.gpu" not in listed:
         problems.append("requires_hardware must include jetson.gpu")
+    problems += _registry_names(doc.get("image"))
     return problems
 
 
@@ -216,3 +217,33 @@ def _pick(value, allow):
             return None
         return [_pick(item, allow[0]) for item in value]
     return None
+
+
+def _registry_names(image):
+    """Rule 12: the image names the allowlist exports come from a registry, so each must be a short token.
+
+    A registry controls an image's architecture, its platform list and the predicate types of its attestations. An
+    escape sequence, a bidi override or 3000 characters there must not reach a consumer that imports the allowlist.
+    """
+    problems = []
+    if not isinstance(image, dict):
+        return problems
+    arch = image.get("architecture")
+    if arch is not None and not (isinstance(arch, str) and ARCH_NAME_RE.fullmatch(arch)):
+        problems.append("image.architecture must be a short lowercase token")
+    platforms = image.get("platforms")
+    if isinstance(platforms, list) and not all(isinstance(x, str) and PLATFORM_NAME_RE.fullmatch(x) for x in platforms):
+        problems.append("image.platforms entries must be os/architecture[/variant] tokens")
+    prov = image.get("provenance")
+    for att in (prov.get("attestations") if isinstance(prov, dict) and isinstance(prov.get("attestations"), list) else []):
+        types = att.get("predicate_types") if isinstance(att, dict) else None
+        if isinstance(types, list) and not all(isinstance(t, str) and PREDICATE_RE.fullmatch(t) for t in types):
+            problems.append("image.provenance predicate_types must be printable ASCII without spaces")
+            break
+    return problems
+
+
+# Defined after the functions so that the line numbers the mutation runner pins (assurance/preflight/mutants.py) hold.
+ARCH_NAME_RE = re.compile(r"[a-z0-9_-]{1,32}")
+PLATFORM_NAME_RE = re.compile(r"[a-z0-9_]{1,32}(/[a-z0-9_]{1,32}){1,2}")
+PREDICATE_RE = re.compile(r"[\x21-\x7e]{1,200}")
