@@ -1,6 +1,6 @@
 # What has been verified
 
-Last updated: 2026-10-30. Version 0.1.0. CI results below are for `fb579c7`.
+Last updated: 2026-10-30 (the release run on `2f47ff3`). Version 0.1.0.
 
 ## Verified by running it
 
@@ -55,11 +55,13 @@ anonymously, nothing pulled or run:
   target record. The written example is [l4t-example.md](l4t-example.md); the report is
   [example-l4t-report.json](example-l4t-report.json).
 
-## Verified by CI (GitHub Actions, run 3 on `main` at `fb579c7`, 2026-10-26)
+## Verified by CI (GitHub Actions, `main` at `2f47ff3`, 2026-10-30, the head v0.1.0 is tagged from)
 
-All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/40331286519
+All 15 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/41064484219. The matrix below now
+includes Python 3.10 and 3.12 and the optional `assurance` job (PF-1 to PF-4). The first full run, run 3 at `fb579c7`
+on 2026-10-26 (10 jobs), is https://github.com/Egrit-AI/egrit-preflight/actions/runs/40331286519.
 
-- Unit tests on Ubuntu 24.04 and macOS (`macos-latest`), Python 3.9, 3.10, 3.11, 3.12 and 3.13 (3.10 and 3.12 added after this run; see the latest run on `main`).
+- Unit tests on Ubuntu 24.04 and macOS (`macos-latest`), Python 3.9, 3.10, 3.11, 3.12 and 3.13.
 - Clean install (build, install the wheel in a fresh venv, run the CLI) on Ubuntu and macOS.
 - **Real linux/arm64 container execution**, twice: x86_64 Linux with QEMU, and a native arm64 runner
   (`ubuntu-24.04-arm`). Each pins `ubuntu:24.04` to its digest at run time, runs `smoke`, and asserts `smoke.arch` is

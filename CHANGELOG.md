@@ -3,7 +3,10 @@
 Issue and pull request numbers in entries up to the public release of 2026-10-30 refer to the private development
 repository; entries after it refer to this repository.
 
-## Unreleased
+## 0.1.0 (2026-10-30)
+
+First release. Standard library only, Python 3.9 or later, Apache-2.0. Entries are newest first; the earliest
+describe what the tool is.
 
 - Docs: `docs/l4t-example.md` records one real `image` run against `nvcr.io/nvidia/l4t-jetpack` pinned by digest,
   from the `L4T inspect` workflow on 2026-10-30: architecture PASS from the config, SBOM PASS from the digest-named
@@ -78,10 +81,6 @@ repository; entries after it refer to this repository.
   that `docs/releases/<tag>.md` exists, and publishes a GitHub release carrying both and those notes.
   `docs/releases/v0.1.0.md` states what the release cannot verify. `CONTRIBUTING.md` gains the release
   procedure (#6, public repository).
-
-## 0.1.0 (2026-10-26)
-
-First release. Standard library only, Python 3.9 or later, Apache-2.0.
 
 - `doctor`: host, Docker, Buildx and the ARM64 route (Linux x86_64 with QEMU, native Linux ARM64, Intel Mac emulation,
   Apple Silicon). Read-only; never registers QEMU for you.
