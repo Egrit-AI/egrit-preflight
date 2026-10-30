@@ -45,6 +45,10 @@ Issue and pull request numbers in this file refer to the private development rep
   `check_report` now rejects a `target.architecture` other than `linux/arm64`, which the schema already required (rule
   9), with a new invalid fixture `target-architecture-not-arm64.json` (6 valid, 21 invalid). No report the schema
   accepts is rejected.
+- Release workflow: pushing a `v*` tag builds the wheel and sdist, checks the tag against `__version__` and
+  that `docs/releases/<tag>.md` exists, and publishes a GitHub release carrying both and those notes.
+  `docs/releases/v0.1.0.md` states what the release cannot verify. `CONTRIBUTING.md` gains the release
+  procedure (#6, public repository).
 
 ## 0.1.0 (2026-10-26)
 
