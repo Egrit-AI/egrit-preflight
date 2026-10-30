@@ -16,7 +16,7 @@ step() {
   if "$@"; then SUMMARY+=("ok      $name"); else SUMMARY+=("FAILED  $name (exit $?)"); fi
 }
 
-step "unit tests, unchanged (170 expected)" python3 -m unittest discover -s tests -t . -q
+step "unit tests, unchanged (173 expected)" python3 -m unittest discover -s tests -t . -q
 step "PF-3 exhaustive to length 8 (finite proof of that finite statement)" python3 assurance/preflight/exhaustive.py
 step "mutants (headline lines must all be killed)" python3 assurance/preflight/mutants.py
 step "Hypothesis PF-1 to PF-4, profile $PROFILE (expected failures are the pinned defects)" \
