@@ -1,9 +1,16 @@
 # Changelog
 
-Issue and pull request numbers in this file refer to the private development repository, not to this one.
+Issue and pull request numbers in entries up to the public release of 2026-10-30 refer to the private development
+repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Report contract (additive, `schema_version` stays 1): `image` UNKNOWNs say what to supply. The four checks that run
+  without a target record carry a `remediation` naming `--target` and the example record. When the image was read
+  only from its registry manifest, `runtime.cuda`, `runtime.tensorrt` and `target.l4t` say the version was not read
+  there (declared dependencies come from a local image only) and give the `docker pull --platform linux/arm64`
+  command, instead of "Image declares no CUDA version" from a path that never read the image. Text and
+  `remediation` only: no new check id, no outcome changes. Fixtures regenerated (#9, public repository).
 - `image`: SBOM, attestation, signature and VEX artefacts published as digest-named tags (`REPO:sha256-<hex>.sbom`
   and so on, the sigstore convention NVIDIA's l4t images use) are now found when no BuildKit attestation manifest is
   listed. Their manifests are read, never their contents. A `.sbom` tag makes `image.sbom` PASS (`declared`); a
