@@ -140,6 +140,7 @@
       "evidence": "none",
       "id": "target.jetpack",
       "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
       "section": "image",
       "summary": "JetPack version not compared. No target record supplied (--target)."
     },
@@ -147,6 +148,7 @@
       "evidence": "none",
       "id": "target.l4t",
       "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
       "section": "image",
       "summary": "L4T agreement not compared. No target record supplied (--target)."
     },
@@ -154,6 +156,7 @@
       "evidence": "none",
       "id": "runtime.cuda",
       "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
       "section": "image",
       "summary": "CUDA version not compared. No target record supplied (--target)."
     },
@@ -161,6 +164,7 @@
       "evidence": "none",
       "id": "runtime.tensorrt",
       "outcome": "UNKNOWN",
+      "remediation": "Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to state your JetPack release.",
       "section": "image",
       "summary": "TensorRT version not compared. No target record supplied (--target)."
     },
