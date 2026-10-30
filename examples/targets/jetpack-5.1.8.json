@@ -1,0 +1,20 @@
+{
+  "name": "JetPack 5.1.8 (declared from NVIDIA's release page, not read from a device)",
+  "architecture": "aarch64",
+  "software": {
+    "jetpack": "5.1.8",
+    "jetson_linux": "35.7.0"
+  },
+  "runtimes": {
+    "cuda": "11.4.19",
+    "tensorrt": "8.5.2"
+  },
+  "status": "declared",
+  "sources": [
+    {
+      "what": "JetPack 5.1.8 release page: Jetson Linux 35.7.0, CUDA 11.4.19, TensorRT 8.5.2",
+      "url": "https://developer.nvidia.com/embedded/jetpack-sdk-518",
+      "retrieved": "2026-10-30"
+    }
+  ]
+}

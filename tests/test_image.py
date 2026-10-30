@@ -154,12 +154,12 @@ class Image(unittest.TestCase):
         self.assertEqual(by_id(r, "target.l4t")["outcome"], "PASS")
 
     def test_no_target_unknowns_name_the_input_to_supply(self):
-        # Prevents an UNKNOWN that leaves the user guessing: each no-target check names --target and the example record.
+        # Prevents an UNKNOWN that leaves the user guessing: each no-target check names --target and the record library.
         r = inspect_image(PINNED, runner=local())
         for cid in ("target.jetpack", "target.l4t", "runtime.cuda", "runtime.tensorrt"):
             c = by_id(r, cid)
             self.assertEqual(c["outcome"], "UNKNOWN", cid)
-            self.assertIn("--target examples/target-orin-nano-jetpack-6.2.json", c["remediation"], cid)
+            self.assertIn("--target examples/targets/jetpack-6.2.json", c["remediation"], cid)
 
     def test_registry_only_inspection_says_versions_were_not_read_and_how_to_pull(self):
         # Prevents "Image declares no CUDA version" from the registry path, which never reads the image's environment.

@@ -404,8 +404,8 @@ def _compare_target(ref, target, target_ok, result, checks):
     if not target_ok:
         if target is None and not result["target"]:
             why = "No target record supplied (--target)."
-            fix = ("Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to "
-                   "state your JetPack release.")
+            fix = ("Pass a target record for your JetPack release, such as --target examples/targets/jetpack-6.2.json "
+                   "(one per release in examples/targets/), or a copy edited to match your device.")
         else:
             why, fix = "Target record unusable.", "Fix the target record (see target.record) and run again."
         for cid, what in (("target.jetpack", "JetPack version"), ("target.l4t", "L4T agreement"),

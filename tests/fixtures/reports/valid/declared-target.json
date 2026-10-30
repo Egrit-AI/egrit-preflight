@@ -256,7 +256,7 @@
     "generated_by": "egrit-preflight 0.1.0",
     "inputs": {
       "image_reference": "registry.example/l4t/app:r36.4.0@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "target_record_sha256": "sha256:b35e8e1808a210b7bff9f9d4fd0ac2947a3ec0893361c153186f957abda90168"
+      "target_record_sha256": "sha256:700aa526f632fd38a079f225cf5574b9c5046330b86944f09471a3dfc1f5b170"
     },
     "python": "3.12.0",
     "smoke_executed": false,
