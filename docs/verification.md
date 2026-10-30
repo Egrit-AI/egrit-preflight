@@ -1,6 +1,6 @@
 # What has been verified
 
-Last updated: 2026-10-26. Version 0.1.0. CI results below are for `fb579c7`.
+Last updated: 2026-10-30. Version 0.1.0. CI results below are for `fb579c7`.
 
 ## Verified by running it
 
@@ -57,6 +57,8 @@ All 10 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/403
   Docker, remote Docker contexts (the QEMU check reads the local machine).
 - Any NVIDIA image (the sandbox's network blocked `nvcr.io`), any L4T behaviour, and everything on a Jetson: CUDA,
   TensorRT, GPU, device nodes, performance. These are `REQUIRES_HARDWARE`.
+  The `L4T inspect` workflow (`workflow_dispatch`, `.github/workflows/l4t-inspect.yml`) exists to make the registry
+  read on a runner with Docker and network; no run of it is recorded here yet.
 - Install from PyPI: nothing is published to PyPI.
 - Reading the image config of a single-platform registry manifest (the NVIDIA L4T case) against a real registry: the
   path is unit-tested with scripted `docker buildx imagetools inspect --format '{{json .Image}}'` output only, and

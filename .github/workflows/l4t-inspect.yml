@@ -1,0 +1,87 @@
+name: L4T inspect
+
+# Manually triggered. Inspects one pinned NVIDIA L4T image from its registry on a plain Ubuntu runner, which has
+# Docker and network, and uploads the output as evidence for the documented example (issue #2). Nothing is pulled
+# and nothing from the image is run. This is a registry read, not a Jetson result: the host has no NVIDIA
+# libraries or devices, so `jetson.gpu` must read REQUIRES_HARDWARE. A registry that cannot be reached leaves the
+# image checks UNKNOWN; the job records that rather than failing on it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Image reference pinned by digest (name@sha256:<digest>); nothing is pulled or run"
+        required: true
+        default: "nvcr.io/nvidia/l4t-jetpack@sha256:34ccf0f3b63c6da9eee45f2e79de9bf7fdf3beda9abfd72bbf285ae9d40bb673"
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: inspect a pinned L4T image (registry read, no Jetson)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      IMAGE: ${{ inputs.image }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: Record the retrieval date and the environment
+        run: |
+          {
+            echo "retrieved_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "image=$IMAGE"
+            echo "runner=$(uname -srm)"
+            echo "docker=$(docker version --format '{{.Server.Version}}')"
+            echo "buildx=$(docker buildx version)"
+            echo "tool=$(egrit-preflight --version)"
+          } | tee l4t-environment.txt
+      - name: image (human-readable; exit 1 means a check FAILed, which the artefact records)
+        run: |
+          set +e
+          egrit-preflight image --image "$IMAGE" | tee l4t-image.txt
+          echo "exit=${PIPESTATUS[0]}" | tee -a l4t-environment.txt
+      - name: report --json
+        run: |
+          set +e
+          egrit-preflight report --json --image "$IMAGE" -o l4t-report.json
+          echo "report_exit=$?" | tee -a l4t-environment.txt
+          set -e
+          test -s l4t-report.json
+      - name: Summarise, and assert what must hold off-device
+        run: |
+          python - <<'PY'
+          import json, os
+          r = json.load(open("l4t-report.json"))
+          c = {x["id"]: x for x in r["checks"]}
+          image = os.environ["IMAGE"]
+          want = image.split("@", 1)[1] if "@sha256:" in image else None
+          got = (r.get("image") or {}).get("digest")
+          lines = ["# L4T inspect", "", f"Image: `{image}`", f"Digest read: `{got}`", "",
+                   "| check | outcome | evidence |", "|---|---|---|"]
+          lines += [f"| {k} | {v['outcome']} | {v.get('evidence') or ''} |" for k, v in sorted(c.items())]
+          lines += ["", "Registry read on an x86_64 runner without NVIDIA libraries or devices. Not a Jetson result."]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+              f.write("\n".join(lines) + "\n")
+          print("\n".join(lines))
+          # Invariants: these hold whatever the registry returned.
+          assert c["jetson.gpu"]["outcome"] == "REQUIRES_HARDWARE", c["jetson.gpu"]
+          assert r["hardware_verified"] is False
+          assert r["provenance"]["smoke_executed"] is False, "nothing may run"
+          if want and got:
+              assert got == want, f"digest read {got} is not the pinned {want}"
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: l4t-inspect
+          path: |
+            l4t-environment.txt
+            l4t-image.txt
+            l4t-report.json
