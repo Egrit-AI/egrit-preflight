@@ -391,13 +391,12 @@ def _compare_target(ref, target, target_ok, result, checks):
 def _not_read(result, ref, what):
     """Why a declared value went unread on this host: (summary, remediation), or None when the image was read locally.
 
-    Declared dependencies come from `docker image inspect` of a local image. A registry manifest, or no inspection
-    at all, never shows them, so "declares no CUDA version" would be a claim about an environment nobody read.
+    Declared dependencies come from the image config. A bare registry manifest, or no inspection at all, never
+    shows them, so "declares no CUDA version" would be a claim about an environment nobody read.
     """
-    source = result.get("source")
-    if source == "local image":
-        return None
-    if source == "registry manifest":
+    if result["declared_dependencies"]:
+        return None  # the image config was read, locally or from the registry, so "declares none" is a fact
+    if result.get("source") == "registry manifest":
         return (f"{what} not read from the registry manifest; declared dependencies are read from a local image only.",
                 f"'docker pull --platform linux/arm64 {ref}' and run again.")
     return (f"{what} not read: the image could not be inspected (see image.manifest).",
