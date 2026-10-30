@@ -1,9 +1,16 @@
 # Changelog
 
-Issue and pull request numbers in this file refer to the private development repository, not to this one.
+Issue and pull request numbers in entries up to the public release of 2026-10-30 refer to the private development
+repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Report contract (additive, `schema_version` stays 1): `image` UNKNOWNs say what to supply. The four checks that run
+  without a target record carry a `remediation` naming `--target` and the example record. When the image was read
+  only from its registry manifest, `runtime.cuda`, `runtime.tensorrt` and `target.l4t` say the version was not read
+  there (declared dependencies come from a local image only) and give the `docker pull --platform linux/arm64`
+  command, instead of "Image declares no CUDA version" from a path that never read the image. Text and
+  `remediation` only: no new check id, no outcome changes. Fixtures regenerated (#9, public repository).
 - Report contract (additive, `schema_version` stays 1): new rule 11. The reference reader rejects a report whose
   `checks` is empty, one with no `jetson.gpu` check, and one whose `requires_hardware` leaves out `jetson.gpu`. Before,
   `checks: []` with `overall: PASS` was accepted: a report that checked nothing read as a clean pass. A

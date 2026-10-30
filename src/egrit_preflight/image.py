@@ -317,10 +317,15 @@ def _compare_target(ref, target, target_ok, result, checks):
     deps_env = result["declared_dependencies"].get("env", {}) if result["declared_dependencies"] else {}
     grade = o.DECLARED  # target records and image tags are declarations until read from a device
     if not target_ok:
-        why = "No target record supplied (--target)." if target is None and not result["target"] else "Target record unusable."
+        if target is None and not result["target"]:
+            why = "No target record supplied (--target)."
+            fix = ("Pass a target record: --target examples/target-orin-nano-jetpack-6.2.json, copied and edited to "
+                   "state your JetPack release.")
+        else:
+            why, fix = "Target record unusable.", "Fix the target record (see target.record) and run again."
         for cid, what in (("target.jetpack", "JetPack version"), ("target.l4t", "L4T agreement"),
                           ("runtime.cuda", "CUDA version"), ("runtime.tensorrt", "TensorRT version")):
-            checks.append(o.check(cid, o.UNKNOWN, f"{what} not compared. {why}"))
+            checks.append(o.check(cid, o.UNKNOWN, f"{what} not compared. {why}", remediation=fix))
         return
 
     _target_architecture(target, checks)
@@ -339,7 +344,13 @@ def _compare_target(ref, target, target_ok, result, checks):
         checks.append(o.check("target.l4t", o.UNKNOWN, "Target record does not state a Jetson Linux (L4T) version.",
                               remediation="Add software.jetson_linux to the target record."))
     elif not img_l4t:
-        checks.append(o.check("target.l4t", o.UNKNOWN, "Image does not declare an L4T release."))
+        nr = _not_read(result, ref, "L4T release (the tag states none and)")
+        if nr:
+            checks.append(o.check("target.l4t", o.UNKNOWN, nr[0], remediation=nr[1]))
+        else:
+            checks.append(o.check("target.l4t", o.UNKNOWN, "Image does not declare an L4T release.",
+                                  remediation="Use an image whose tag states its L4T release (rNN.N.N) or whose "
+                                              "environment sets L4T_VERSION."))
     elif img_l4t[0] != tgt_l4t[0]:
         checks.append(o.check("target.l4t", o.FAIL,
                               f"L4T major mismatch: image r{'.'.join(map(str, img_l4t))}, target {jl}.",
@@ -359,9 +370,14 @@ def _compare_target(ref, target, target_ok, result, checks):
         want = version_tuple(_get(target, "runtimes", tkey))
         have = next((version_tuple(deps_env[k]) for k in keys if k in deps_env and version_tuple(deps_env[k])), ())
         if not have:
-            checks.append(o.check(cid, o.UNKNOWN, f"Image declares no {label} version."))
+            nr = _not_read(result, ref, f"{label} version")
+            if nr:
+                checks.append(o.check(cid, o.UNKNOWN, nr[0], remediation=nr[1]))
+            else:
+                checks.append(o.check(cid, o.UNKNOWN, f"Image declares no {label} version."))
         elif not want:
-            checks.append(o.check(cid, o.UNKNOWN, f"Target record states no {label} version."))
+            checks.append(o.check(cid, o.UNKNOWN, f"Target record states no {label} version.",
+                                  remediation=f"Add runtimes.{tkey} to the target record."))
         elif have[0] != want[0]:
             checks.append(o.check(cid, o.FAIL,
                                   f"Unsupported dependency: image declares {label} {'.'.join(map(str, have))}, "
@@ -370,6 +386,22 @@ def _compare_target(ref, target, target_ok, result, checks):
             checks.append(o.check(cid, o.REQUIRES_HARDWARE,
                                   f"Declared {label} versions agree at major version; whether the device libraries "
                                   "satisfy the image needs a physical Jetson.", evidence=grade))
+
+
+def _not_read(result, ref, what):
+    """Why a declared value went unread on this host: (summary, remediation), or None when the image was read locally.
+
+    Declared dependencies come from `docker image inspect` of a local image. A registry manifest, or no inspection
+    at all, never shows them, so "declares no CUDA version" would be a claim about an environment nobody read.
+    """
+    source = result.get("source")
+    if source == "local image":
+        return None
+    if source == "registry manifest":
+        return (f"{what} not read from the registry manifest; declared dependencies are read from a local image only.",
+                f"'docker pull --platform linux/arm64 {ref}' and run again.")
+    return (f"{what} not read: the image could not be inspected (see image.manifest).",
+            "Make the image inspectable locally or in its registry (see image.manifest) and run again.")
 
 
 def _list(value):

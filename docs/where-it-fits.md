@@ -20,7 +20,7 @@ JetPack or CUDA major version that cannot match) before you spend device time on
 |---|---|---|
 | `PASS` | Checked, and met. `evidence` says whether this tool observed it or someone declared it. | Carry on. A declared pass is only as good as the declaration. |
 | `FAIL` | Checked, and not met (or a refusal, such as an unpinned tag). | Fix it before you use any hardware. |
-| `UNKNOWN` | Could not be established: no target record, no digest, no attestation, registry unreachable. | Supply the missing input and run again. It is never a pass. |
+| `UNKNOWN` | Could not be established: no target record, no digest, no attestation, registry unreachable. | Supply the input its `remediation` names and run again: a target record (`--target`) for `target.*` and `runtime.*`; a local `docker pull` for versions a registry manifest does not show. It is never a pass. |
 | `REQUIRES_HARDWARE` | Cannot be decided without a physical Jetson. | Test it on the device. |
 
 Typical fixes: a `FAIL` on `image.architecture` means the image has no `linux/arm64` variant; on `target.l4t` or

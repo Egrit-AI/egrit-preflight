@@ -144,6 +144,35 @@ class Image(unittest.TestCase):
         self.assertEqual(by_id(r, "target.jetpack")["evidence"], "declared")
         self.assertEqual(by_id(r, "target.l4t")["outcome"], "PASS")
 
+    def test_no_target_unknowns_name_the_input_to_supply(self):
+        # Prevents an UNKNOWN that leaves the user guessing: each no-target check names --target and the example record.
+        r = inspect_image(PINNED, runner=local())
+        for cid in ("target.jetpack", "target.l4t", "runtime.cuda", "runtime.tensorrt"):
+            c = by_id(r, cid)
+            self.assertEqual(c["outcome"], "UNKNOWN", cid)
+            self.assertIn("--target examples/target-orin-nano-jetpack-6.2.json", c["remediation"], cid)
+
+    def test_registry_only_inspection_says_versions_were_not_read_and_how_to_pull(self):
+        # Prevents "Image declares no CUDA version" from the registry path, which never reads the image's environment.
+        doc = {"manifests": [{"platform": {"os": "linux", "architecture": "arm64"}}]}
+        fake = FakeRunner([(("docker", "image", "inspect"), bad("No such image")),
+                           (("docker", "buildx", "imagetools"), ok(json.dumps(doc)))])
+        t = target(software={"jetpack": "6.2", "jetson_linux": "36.4.3"}, runtimes={"cuda": "12.6", "tensorrt": "10.3"})
+        r = inspect_image("ubuntu:24.04", t, runner=fake)
+        self.assertEqual(r["source"], "registry manifest")
+        for cid in ("runtime.cuda", "runtime.tensorrt", "target.l4t"):
+            c = by_id(r, cid)
+            self.assertEqual(c["outcome"], "UNKNOWN", cid)
+            self.assertIn("not read from the registry manifest", c["summary"], cid)
+            self.assertIn("docker pull --platform linux/arm64 ubuntu:24.04", c["remediation"], cid)
+
+    def test_local_image_without_versions_still_says_it_declares_none(self):
+        # Prevents the registry wording leaking into the local path, where the environment really was read.
+        t = target(software={"jetpack": "6.2", "jetson_linux": "36.4.3"}, runtimes={"cuda": "12.6"})
+        c = by_id(inspect_image(PINNED, t, runner=local()), "runtime.cuda")
+        self.assertEqual(c["summary"], "Image declares no CUDA version.")
+        self.assertNotIn("remediation", c)
+
     def test_helpers(self):
         self.assertTrue(valid_reference("nvcr.io/nvidia/l4t-base:r36.2.0"))
         self.assertEqual(version_tuple("12.6.1-1"), (12, 6, 1))
