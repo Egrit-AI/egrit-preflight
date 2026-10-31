@@ -12,6 +12,7 @@ Thanks for helping. Keep the tool small, honest and free of required services.
 - Never turn a missing or unverifiable fact into `PASS`. Use `UNKNOWN` or `REQUIRES_HARDWARE`.
 - Never add automatic privileged operations, hidden network calls, telemetry or account requirements.
 - Cite a source (link and retrieval date) for any NVIDIA compatibility claim you add to the documentation.
+- New to the repository? [docs/first-pull-request.md](docs/first-pull-request.md) is the short route from fork to merge.
 - Open an issue before large changes. Be kind: see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 By contributing you agree your contribution is licensed under Apache-2.0.
