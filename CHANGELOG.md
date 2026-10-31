@@ -5,7 +5,15 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
-Nothing yet.
+- Docs: `docs/target-example.md` records one real `image` run with `--target examples/target-orin-nano-jetpack-6.2.json`
+  against `dustynv/l4t-pytorch:r36.4.0`, pinned as `name:tag@sha256:<digest>`, on 2026-10-31: `target.architecture`,
+  `target.jetpack` and `target.l4t` PASS (declared), `runtime.cuda` and `runtime.tensorrt` UNKNOWN because the image
+  declares no versions. It explains why keeping the tag beside the digest is what lets `target.l4t` be compared. The
+  report is `docs/example-target-report.json`, and `tests/test_contract.py` now checks it against the contract (#22).
+- `image` and `smoke`: the `reference.pinned` remediation now says `name:tag@sha256:<digest>` instead of
+  `name@sha256:<digest>`, and `--image` help and the README say the same. The L4T release is read from the tag when the
+  image does not set `L4T_VERSION`, so advice that dropped the tag also dropped the `target.l4t` comparison. Text only;
+  no outcome changes. The `mutable-tag.json` fixture is regenerated (#22).
 
 ## 0.1.0 (2026-10-30)
 

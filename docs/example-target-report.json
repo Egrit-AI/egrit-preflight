@@ -1,0 +1,329 @@
+{
+  "checks": [
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "--version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "Docker version 29.9.2, build a82e528\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.cli",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker CLI 29.9.2."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "info",
+          "--format",
+          "{{json .}}"
+        ],
+        "output_omitted": true,
+        "returncode": 1,
+        "timed_out": false
+      },
+      "detail": "failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory",
+      "evidence": "none",
+      "id": "docker.daemon",
+      "outcome": "FAIL",
+      "remediation": "Start the Docker daemon (Linux: 'sudo systemctl start docker'; macOS: open Docker Desktop). If the error mentions permission denied, add your user to the 'docker' group or use rootless Docker.",
+      "section": "doctor",
+      "summary": "Docker daemon is not reachable."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "version"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5\n",
+        "timed_out": false
+      },
+      "evidence": "observed",
+      "id": "docker.buildx",
+      "outcome": "PASS",
+      "section": "doctor",
+      "summary": "Docker Buildx 0.38.1."
+    },
+    {
+      "detail": "mode: linux-x86_64-qemu",
+      "evidence": "none",
+      "id": "arm64.execution",
+      "outcome": "UNKNOWN",
+      "section": "doctor",
+      "summary": "ARM64 execution not assessed: Docker daemon unavailable."
+    },
+    {
+      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.valid",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image reference is well formed."
+    },
+    {
+      "evidence": "observed",
+      "id": "reference.pinned",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Reference is pinned by digest."
+    },
+    {
+      "command": {
+        "argv": [
+          "docker",
+          "buildx",
+          "imagetools",
+          "inspect",
+          "--format",
+          "{{json .Image}}",
+          "dustynv/l4t-pytorch:r36.4.0@sha256:a05c85def9139c21014546451d3baab44052d7cabe854d937f163390bfd5201b"
+        ],
+        "returncode": 0
+      },
+      "evidence": "observed",
+      "id": "image.manifest",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Single-platform manifest and its image config inspected (nothing pulled)."
+    },
+    {
+      "evidence": "observed",
+      "id": "image.architecture",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Image provides linux/arm64."
+    },
+    {
+      "evidence": "none",
+      "id": "image.sbom",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "SBOM attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "evidence": "none",
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "evidence": "declared",
+      "id": "target.architecture",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Target declares aarch64, which this report covers (linux/arm64). Declared, not observed on a device."
+    },
+    {
+      "evidence": "declared",
+      "id": "target.jetpack",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Target JetPack 6.2 (as declared in the record)."
+    },
+    {
+      "evidence": "declared",
+      "id": "target.l4t",
+      "outcome": "PASS",
+      "section": "image",
+      "summary": "Declared L4T release agrees at major.minor (image r36.4.0, target 36.4.3). Declared, not observed on a device."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Image declares no CUDA version."
+    },
+    {
+      "evidence": "none",
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Image declares no TensorRT version."
+    },
+    {
+      "detail": "An inspected manifest or an ARM64 smoke test is not Jetson, CUDA or TensorRT compatibility.",
+      "evidence": "none",
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "image",
+      "summary": "Whether this image's CUDA/TensorRT user space works on a Jetson GPU needs a physical device."
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Docker version 29.9.2, build a82e528\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "info",
+        "--format",
+        "{{json .}}"
+      ],
+      "output_omitted": true,
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "version"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "docker",
+        "buildx",
+        "imagetools",
+        "inspect",
+        "--format",
+        "{{json .Image}}",
+        "dustynv/l4t-pytorch:r36.4.0@sha256:a05c85def9139c21014546451d3baab44052d7cabe854d937f163390bfd5201b"
+      ],
+      "returncode": 0
+    }
+  ],
+  "docker": {
+    "buildx_version": "0.38.1",
+    "cli_version": "29.9.2",
+    "daemon_architecture": null,
+    "daemon_os": null,
+    "daemon_version": null,
+    "docker_desktop": null
+  },
+  "hardware_verified": false,
+  "host": {
+    "architecture": "x86_64",
+    "binfmt_qemu_aarch64": "absent",
+    "execution_mode": "linux-x86_64-qemu",
+    "os": "linux",
+    "python": "3.13.18"
+  },
+  "image": {
+    "architecture": "arm64",
+    "declared_dependencies": {
+      "env": {
+        "NVIDIA_DRIVER_CAPABILITIES": "all",
+        "NVIDIA_VISIBLE_DEVICES": "all"
+      },
+      "labels": {
+        "org.opencontainers.image.version": "22.04"
+      }
+    },
+    "digest": "sha256:a05c85def9139c21014546451d3baab44052d7cabe854d937f163390bfd5201b",
+    "platforms": null,
+    "provenance": {
+      "arm64_manifest_digests": [],
+      "attestations": [],
+      "errors": [],
+      "signature_verified": false,
+      "status": "no-manifest-list"
+    },
+    "reference": "dustynv/l4t-pytorch:r36.4.0@sha256:a05c85def9139c21014546451d3baab44052d7cabe854d937f163390bfd5201b"
+  },
+  "limitations": [
+    "ARM64 user-space emulation or a native ARM64 run is not a Jetson run.",
+    "CUDA, TensorRT, the NVIDIA driver, device nodes and GPU performance are not tested.",
+    "Declared versions (target records, image tags and labels) are not observed on a device.",
+    "A mocked or emulated result is never hardware verification."
+  ],
+  "overall": "FAIL",
+  "provenance": {
+    "generated_by": "egrit-preflight 0.1.0",
+    "inputs": {
+      "image_reference": "dustynv/l4t-pytorch:r36.4.0@sha256:a05c85def9139c21014546451d3baab44052d7cabe854d937f163390bfd5201b",
+      "target_record_sha256": "sha256:700aa526f632fd38a079f225cf5574b9c5046330b86944f09471a3dfc1f5b170"
+    },
+    "python": "3.13.18",
+    "smoke_executed": false,
+    "telemetry": "none; this tool sends nothing anywhere"
+  },
+  "requires_hardware": [
+    "jetson.gpu"
+  ],
+  "schema_version": "1",
+  "target": {
+    "architecture": "linux/arm64",
+    "record": {
+      "jetpack": "6.2",
+      "jetson_linux": "36.4.3",
+      "name": "Jetson Orin Nano 8GB developer kit, JetPack 6.2 (declared, not read from a device)",
+      "status": "declared"
+    }
+  },
+  "timestamp": "2026-10-31T11:11:31Z",
+  "tool": {
+    "name": "egrit-preflight",
+    "version": "0.1.0"
+  },
+  "uncertainties": [
+    {
+      "id": "arm64.execution",
+      "outcome": "UNKNOWN",
+      "section": "doctor",
+      "summary": "ARM64 execution not assessed: Docker daemon unavailable."
+    },
+    {
+      "id": "jetson.gpu",
+      "outcome": "REQUIRES_HARDWARE",
+      "section": "doctor",
+      "summary": "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here."
+    },
+    {
+      "id": "image.sbom",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "SBOM attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "id": "image.provenance",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Build provenance attestation not established: no registry manifest list was available for this reference."
+    },
+    {
+      "id": "runtime.cuda",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Image declares no CUDA version."
+    },
+    {
+      "id": "runtime.tensorrt",
+      "outcome": "UNKNOWN",
+      "section": "image",
+      "summary": "Image declares no TensorRT version."
+    }
+  ]
+}

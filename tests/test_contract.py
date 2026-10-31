@@ -88,6 +88,11 @@ class Fixtures(unittest.TestCase):
         self.assertEqual(problems, [])
         self.assertEqual(validate(doc, SCHEMA), [])
 
+    def test_the_target_example_report_satisfies_the_contract(self):
+        doc, problems = contract.load_report((ROOT / "docs" / "example-target-report.json").read_bytes())
+        self.assertEqual(problems, [])
+        self.assertEqual(validate(doc, SCHEMA), [])
+
 
 class WhatTheToolCanProduce(unittest.TestCase):
     """Whatever state the machine is in, the report must satisfy the contract."""

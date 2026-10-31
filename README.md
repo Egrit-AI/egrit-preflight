@@ -42,7 +42,9 @@ egrit-preflight smoke --image IMAGE_REF --yes # run one CPU-only ARM64 test (exp
 egrit-preflight report --json --image IMAGE_REF --smoke --yes -o report.json
 ```
 
-Use an immutable reference (`name@sha256:<digest>`). To find the digest of a tag:
+Use an immutable reference, and keep the tag beside the digest (`name:tag@sha256:<digest>`): the digest fixes the
+content, and an L4T release stated in the tag can then still be compared with a target record. To find the digest
+of a tag:
 
 ```sh
 docker buildx imagetools inspect ubuntu:24.04     # the top-level "Digest:" line
@@ -57,6 +59,7 @@ Where this fits in a build-to-device process, what to do with each outcome, and 
 The report's fields and the guarantees a program reading it can rely on: [docs/report-contract.md](docs/report-contract.md).
 What `image` establishes about an NVIDIA L4T image from its registry, and what it does not, with a real run:
 [docs/l4t-example.md](docs/l4t-example.md).
+The same kind of run with `--target` set, showing what a target record adds: [docs/target-example.md](docs/target-example.md).
 
 ## Outcomes and exit codes
 

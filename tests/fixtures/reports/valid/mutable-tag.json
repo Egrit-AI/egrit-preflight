@@ -80,7 +80,7 @@
       "evidence": "none",
       "id": "reference.pinned",
       "outcome": "UNKNOWN",
-      "remediation": "Resolve a digest: docker buildx imagetools inspect example.com/app:latest ; then use name@sha256:<digest>.",
+      "remediation": "Resolve a digest: docker buildx imagetools inspect example.com/app:latest ; then use name:tag@sha256:<digest>. Keeping the tag lets an L4T release stated in it be compared with a target record.",
       "section": "image",
       "summary": "Reference is a mutable tag, so the result is not reproducible."
     },
