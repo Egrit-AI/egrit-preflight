@@ -57,6 +57,7 @@ Where this fits in a build-to-device process, what to do with each outcome, and 
 The report's fields and the guarantees a program reading it can rely on: [docs/report-contract.md](docs/report-contract.md).
 What `image` establishes about an NVIDIA L4T image from its registry, and what it does not, with a real run:
 [docs/l4t-example.md](docs/l4t-example.md).
+The same kind of run with `--target` set, showing what a target record adds: [docs/target-example.md](docs/target-example.md).
 
 ## Outcomes and exit codes
 

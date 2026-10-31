@@ -1,6 +1,6 @@
 # What has been verified
 
-Last updated: 2026-10-30. Version 0.1.0. CI results below are for `f1887df`, the last code change before v0.1.0.
+Last updated: 2026-10-31. Version 0.1.0. CI results below are for `f1887df`, the last code change before v0.1.0.
 
 ## Verified by running it
 
@@ -54,6 +54,20 @@ anonymously, nothing pulled or run:
 - The config's environment declares no CUDA, TensorRT or L4T version, so the version comparisons stay UNKNOWN without a
   target record. The written example is [l4t-example.md](l4t-example.md); the report is
   [example-l4t-report.json](example-l4t-report.json).
+
+## Verified with a target record against Docker Hub (cloud container, 2026-10-31)
+
+`image --target examples/target-orin-nano-jetpack-6.2.json` against
+`dustynv/l4t-pytorch:r36.4.0@sha256:a05c85def9139c21014546451d3baab44052d7cabe854d937f163390bfd5201b`, a community
+image, read from its registry with no Docker daemon running and nothing pulled:
+
+- `target.architecture`, `target.jetpack` and `target.l4t` PASS (declared); `target.l4t` agrees at major.minor
+  (image r36.4.0 from the tag, target 36.4.3).
+- `runtime.cuda` and `runtime.tensorrt` UNKNOWN: the image's environment declares no CUDA or TensorRT version.
+- The same image pinned by digest alone gives `target.l4t` UNKNOWN, because the L4T release is read from the tag.
+- Not checked: an NVIDIA `nvcr.io` image with a target record (the container's proxy refused `nvcr.io`), and any
+  CUDA or TensorRT comparison. The written example is [target-example.md](target-example.md); the report is
+  [example-target-report.json](example-target-report.json).
 
 ## Verified by CI (GitHub Actions, run 27 on `main` at `f1887df`, 2026-10-30)
 
