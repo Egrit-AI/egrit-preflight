@@ -1,6 +1,6 @@
 # Target records by JetPack release
 
-Last updated: 2026-10-30
+Last updated: 2026-10-31
 
 Declared target records for recent JetPack releases, to pass to `--target`. Each states the Jetson Linux (L4T), CUDA
 and TensorRT versions NVIDIA publishes for that release, the page they were read from and the date it was read. They
@@ -26,6 +26,10 @@ egrit-preflight image --image IMAGE_REF --target examples/targets/jetpack-6.2.js
 Pick the release your device runs (`cat /etc/nv_tegra_release` on the device names its Jetson Linux release). Once you
 have read the versions from the device itself, copy the record, set them, and keep `status` as `declared` until an
 observed procedure exists.
+
+These files are the source. An optional helper, such as Egrit's client (not publicly released yet) described in
+[where it fits](../../docs/where-it-fits.md#optional-egrit-alongside-preflight), returns them unchanged; it adds no
+release this table does not have.
 
 ## Adding a release
 
