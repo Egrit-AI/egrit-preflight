@@ -74,7 +74,7 @@ class DocumentedCommands(unittest.TestCase):
 
     def test_future_features_are_labelled_as_not_available(self):
         text = (ROOT / "docs" / "where-it-fits.md").read_text(encoding="utf-8")
-        section = text[text.index("## Optional: keeping a report with a plan"):]
+        section = text[text.index("## Optional: Egrit alongside Preflight"):]
         self.assertIn("Not available yet", section)
         self.assertIn("No command for it exists", section)
         self.assertNotIn("```", section, "no runnable example for a feature that does not exist")
