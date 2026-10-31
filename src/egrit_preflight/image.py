@@ -89,7 +89,8 @@ def inspect_image(ref, target_path=None, require_digest=False, runner=default_ru
         checks.append(o.check(
             "reference.pinned", o.FAIL if require_digest else o.UNKNOWN,
             "Reference is a mutable tag, so the result is not reproducible.",
-            remediation="Resolve a digest: docker buildx imagetools inspect " + ref + " ; then use name@sha256:<digest>."))
+            remediation="Resolve a digest: docker buildx imagetools inspect " + ref + " ; then use name:tag@sha256:<digest>. "
+                        "Keeping the tag lets an L4T release stated in it be compared with a target record."))
 
     target, terr = (None, None)
     if target_path:

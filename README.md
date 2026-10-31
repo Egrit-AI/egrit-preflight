@@ -42,7 +42,9 @@ egrit-preflight smoke --image IMAGE_REF --yes # run one CPU-only ARM64 test (exp
 egrit-preflight report --json --image IMAGE_REF --smoke --yes -o report.json
 ```
 
-Use an immutable reference (`name@sha256:<digest>`). To find the digest of a tag:
+Use an immutable reference, and keep the tag beside the digest (`name:tag@sha256:<digest>`): the digest fixes the
+content, and an L4T release stated in the tag can then still be compared with a target record. To find the digest
+of a tag:
 
 ```sh
 docker buildx imagetools inspect ubuntu:24.04     # the top-level "Digest:" line

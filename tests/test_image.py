@@ -108,6 +108,17 @@ class Image(unittest.TestCase):
         self.assertEqual(c["outcome"], "PASS")
         self.assertEqual(c["evidence"], "declared")
 
+    def test_tag_beside_digest_keeps_both_pinning_and_the_l4t_comparison(self):
+        """#22: the pinning advice keeps the tag, because the L4T release is read from it."""
+        t = target(software={"jetpack": "6.2", "jetson_linux": "36.4.3"})
+        both = inspect_image("nvcr.io/nvidia/l4t-base:r36.4.0@" + DIGEST, t, runner=local())
+        self.assertEqual(by_id(both, "reference.pinned")["outcome"], "PASS")
+        self.assertEqual(by_id(both, "target.l4t")["outcome"], "PASS")
+        digest_only = inspect_image("nvcr.io/nvidia/l4t-base@" + DIGEST, t, runner=local())
+        self.assertEqual(by_id(digest_only, "target.l4t")["outcome"], "UNKNOWN")
+        advice = by_id(inspect_image("nvcr.io/nvidia/l4t-base:r36.4.0", runner=local()), "reference.pinned")
+        self.assertIn("name:tag@sha256:<digest>", advice["remediation"])
+
     def test_unsupported_cuda_dependency_fails_matching_requires_hardware(self):
         t = target(software={"jetpack": "6.2"}, runtimes={"cuda": "12.6", "tensorrt": "10.3"})
         r = inspect_image(PINNED, t, runner=local(env=["CUDA_VERSION=11.4.1", "TENSORRT_VERSION=10.3.0"]))

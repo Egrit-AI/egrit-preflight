@@ -64,13 +64,13 @@ def build_parser():
     common(d)
 
     i = sub.add_parser("image", help="inspect an image reference (nothing is pulled or run)")
-    i.add_argument("--image", required=True, help="image reference, ideally name@sha256:<digest>")
+    i.add_argument("--image", required=True, help="image reference, ideally name:tag@sha256:<digest>")
     i.add_argument("--target", help="target record JSON with JetPack / L4T / CUDA versions")
     i.add_argument("--require-digest", action="store_true", help="treat a mutable tag as FAIL, not UNKNOWN")
     common(i)
 
     s = sub.add_parser("smoke", help="run one CPU-only linux/arm64 container test (needs --yes)")
-    s.add_argument("--image", required=True, help="image reference, ideally name@sha256:<digest>")
+    s.add_argument("--image", required=True, help="image reference, ideally name:tag@sha256:<digest>")
     s.add_argument("--test", default=DEFAULT_TEST, choices=sorted(TESTS), help="allowlisted test (default: arch)")
     s.add_argument("--module", help="module name for --test python-import (no network, no GPU)")
     s.add_argument("--timeout", type=_seconds, default=60.0, help="seconds before the container is removed (default 60)")

@@ -110,7 +110,7 @@ def run_smoke(ref, test=DEFAULT_TEST, timeout=60.0, pull=False, allow_mutable=Fa
     if not m and not allow_mutable:
         checks.append(o.check(
             "reference.pinned", o.FAIL, "Refusing to run a mutable tag: the result would not be reproducible.",
-            remediation="Pin it: docker buildx imagetools inspect " + ref + " ; then use name@sha256:<digest>. "
+            remediation="Pin it: docker buildx imagetools inspect " + ref + " ; then use name:tag@sha256:<digest>. "
                         "Or pass --allow-mutable to run anyway."))
         return res
     checks.append(o.check("reference.pinned", o.PASS if m else o.UNKNOWN,
