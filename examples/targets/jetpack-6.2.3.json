@@ -1,0 +1,25 @@
+{
+  "name": "JetPack 6.2.3 (declared from NVIDIA's release pages, not read from a device)",
+  "architecture": "aarch64",
+  "software": {
+    "jetpack": "6.2.3",
+    "jetson_linux": "36.5.2"
+  },
+  "runtimes": {
+    "cuda": "12.6.10",
+    "tensorrt": "10.3.0"
+  },
+  "status": "declared",
+  "sources": [
+    {
+      "what": "JetPack 6.2.3 SDK page: CUDA 12.6.10 and TensorRT 10.3.0 (component-specific statements; the page's introduction still names JetPack 6.2.2 and 6.2.1)",
+      "url": "https://developer.nvidia.com/embedded/jetpack-sdk-623",
+      "retrieved": "2026-10-29"
+    },
+    {
+      "what": "Jetson Linux 36.5.2 release page: the Jetson Linux release that ships with JetPack 6.2.3",
+      "url": "https://developer.nvidia.com/embedded/jetson-linux-r3652",
+      "retrieved": "2026-10-29"
+    }
+  ]
+}

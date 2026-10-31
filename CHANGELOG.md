@@ -5,7 +5,7 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
-Nothing yet.
+- Examples: a declared target record for JetPack 6.2.3 (Jetson Linux 36.5.2, CUDA 12.6.10, TensorRT 10.3.0), relayed from NVIDIA's release pages as read on 2026-10-29 and flagged for a maintainer re-read; no code change.
 
 ## 0.1.0 (2026-10-30)
 
