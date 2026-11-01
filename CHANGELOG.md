@@ -20,6 +20,7 @@ repository; entries after it refer to this repository.
   `name@sha256:<digest>`, and `--image` help and the README say the same. The L4T release is read from the tag when the
   image does not set `L4T_VERSION`, so advice that dropped the tag also dropped the `target.l4t` comparison. Text only;
   no outcome changes. The `mutable-tag.json` fixture is regenerated (#22).
+- Examples: a declared target record for JetPack 6.2.3 (Jetson Linux 36.5.2, CUDA 12.6.10, TensorRT 10.3.0), relayed from NVIDIA's release pages as read on 2026-10-29 and flagged for a maintainer re-read; no code change.
 
 ## 0.1.0 (2026-10-30)
 
