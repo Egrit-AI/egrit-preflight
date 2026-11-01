@@ -36,6 +36,10 @@ Pick the release your device runs (`cat /etc/nv_tegra_release` on the device nam
 have read the versions from the device itself, copy the record, set them, and keep `status` as `declared` until an
 observed procedure exists.
 
+These files are the source. An optional helper, such as Egrit's client (not publicly released yet) described in
+[where it fits](../../docs/where-it-fits.md#optional-egrit-alongside-preflight), returns them unchanged; it adds no
+release this table does not have.
+
 ## Adding a release
 
 1. Open the release's page from NVIDIA's [JetPack archive](https://developer.nvidia.com/embedded/jetpack-archive) on the
