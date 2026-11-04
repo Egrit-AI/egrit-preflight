@@ -78,17 +78,27 @@ can still contain a path, a user name or an error message from your own machine,
 typed. Share the file you have read, not the one a script produced. Sending it anywhere is a step you take; this tool
 never does.
 
-## Optional: keeping a report with a plan
+## Optional: Egrit alongside Preflight
 
-| | Today | Not available yet |
+Egrit, from the same company, is building a separate and optional developer client that an AI assistant can use on
+your machine around this tool. It is not part of Preflight, and nothing here needs it.
+
+**Not available yet** as a public release: the client and its guide become public together, and until then the
+guide's link below does not open. **No command for it exists** in this tool, and this repository does not document
+Egrit's commands.
+
+| | With Preflight alone | With Egrit's client, optional, once public |
 |---|---|---|
-| Make a report | `egrit-preflight report --json -o report.json`, on your machine, offline where Docker allows it | |
-| Read it | yourself, or with your own script using the [contract](report-contract.md) | |
-| Attach it to an Egrit Plan | | Planned: a separate action you would choose, on your machine, with a file you have reviewed. **No command for it exists**, and this repository will document one only when it ships. |
-| Keep plans privately across sessions | | Possible later as an optional hosted feature from Egrit. None exists today. |
+| Choose a target record | Copy one from [examples/targets](../examples/targets/README.md), or the Orin Nano example | The assistant asks for your device, your exact JetPack release and whether it is installed or planned, then returns the same file from this repository, unchanged, with its source and date. It never guesses a release. |
+| Make a report | `egrit-preflight report --json --image IMAGE_REF --target FILE -o report.json`, on your machine | The same command, which you run. Egrit does not run Preflight, start Docker or read a device. |
+| See what sharing would send | Read the report yourself | The client lists the fields that would leave your machine and sends nothing. |
+| Keep reports with a plan | Keep the files yourself | The client keeps a report you have reviewed in a plan stored on your machine, beside earlier ones, and lists a next check for every `FAIL`, `UNKNOWN` and `REQUIRES_HARDWARE`. |
 
-Whatever Egrit adds later, Preflight stays what it is: the free, local CLI needs no account, shows no prompt to upgrade,
-sends nothing, and keeps working when run on its own. A hosted step, if it ever exists, would be a separate and explicit
+Egrit's [Preflight journey guide](https://github.com/Egrit-AI/egrit-search/blob/main/docs/preflight-journey.md) gives
+its commands, one worked Orin Nano example and which of its steps are available and which are planned.
+
+Whatever Egrit adds, Preflight stays what it is: the free, local CLI needs no account, shows no prompt to upgrade,
+sends nothing, and keeps working when run on its own. A hosted step, if one exists, is a separate and explicit
 choice you make outside this tool, never a requirement of it. And a report carried into any plan keeps its meaning: an
 imported `PASS` is still not a device result, `REQUIRES_HARDWARE` is still not a pass, and a listed attestation is still
 not a verified signature.
