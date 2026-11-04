@@ -83,8 +83,8 @@ never does.
 Egrit, from the same company, is building a separate and optional developer client that an AI assistant can use on
 your machine around this tool. It is not part of Preflight, and nothing here needs it.
 
-**Not available yet** as a public release: the client and its guide become public together, and until then the
-guide's link below does not open. **No command for it exists** in this tool, and this repository does not document
+**Not available yet** as a public release: the client and its guide become public together, and this page links
+the guide only once it is public. **No command for it exists** in this tool, and this repository does not document
 Egrit's commands.
 
 | | With Preflight alone | With Egrit's client, optional, once public |
@@ -94,8 +94,8 @@ Egrit's commands.
 | See what sharing would send | Read the report yourself | The client lists the fields that would leave your machine and sends nothing. |
 | Keep reports with a plan | Keep the files yourself | The client keeps a report you have reviewed in a plan stored on your machine, beside earlier ones, and lists a next check for every `FAIL`, `UNKNOWN` and `REQUIRES_HARDWARE`. |
 
-Egrit's [Preflight journey guide](https://github.com/Egrit-AI/egrit-search/blob/main/docs/preflight-journey.md) gives
-its commands, one worked Orin Nano example and which of its steps are available and which are planned.
+Egrit's Preflight journey guide, with its commands, one worked Orin Nano example and which of its steps are available
+and which are planned, will be linked here when it is public.
 
 Whatever Egrit adds, Preflight stays what it is: the free, local CLI needs no account, shows no prompt to upgrade,
 sends nothing, and keeps working when run on its own. A hosted step, if one exists, is a separate and explicit
