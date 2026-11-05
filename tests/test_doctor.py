@@ -48,6 +48,15 @@ class Doctor(unittest.TestCase):
         self.assertEqual(r["arm64_execution_mode"], "macos-apple-silicon-vm")
         self.assertEqual(by_id(r, "arm64.execution")["outcome"], "PASS")
 
+    def test_jetson_gpu_detail_fits_hosts_with_no_emulation(self):
+        hosts = (("Darwin", "arm64"), ("Linux", "aarch64"))
+        for system, machine in hosts:
+            with self.subTest(system=system):
+                r = run_doctor(FakeRunner(docker_ok(INFO_ARM)), system, machine, Path("/nonexistent"))
+                c = by_id(r, "jetson.gpu")
+                self.assertEqual(c["outcome"], "REQUIRES_HARDWARE")
+                self.assertIn("native ARM64 run", c["detail"])
+
     def test_intel_mac_is_unknown_until_smoke(self):
         r = run_doctor(FakeRunner(docker_ok(INFO_X86)), "Darwin", "x86_64")
         self.assertEqual(r["arm64_execution_mode"], "macos-intel-docker-desktop-emulation")

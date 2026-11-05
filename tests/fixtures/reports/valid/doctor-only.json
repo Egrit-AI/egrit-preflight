@@ -62,7 +62,7 @@
       "summary": "Apple Silicon: linux/arm64 containers run in Docker's Linux VM, without x86 emulation."
     },
     {
-      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "detail": "ARM64 user-space emulation or a native ARM64 run does not provide a Jetson GPU. Use a physical Jetson for these checks.",
       "evidence": "none",
       "id": "jetson.gpu",
       "outcome": "REQUIRES_HARDWARE",

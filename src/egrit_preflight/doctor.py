@@ -71,7 +71,8 @@ def run_doctor(runner=default_run, system=None, machine=None, binfmt_path=hostmo
     checks.append(o.check(
         "jetson.gpu", o.REQUIRES_HARDWARE,
         "CUDA, TensorRT, the NVIDIA driver and Jetson device nodes cannot be tested here.",
-        detail="ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks."))
+        detail="ARM64 user-space emulation or a native ARM64 run does not provide a Jetson GPU. "
+               "Use a physical Jetson for these checks."))
 
     return {"host": host, "docker": docker, "arm64_execution_mode": mode, "binfmt_qemu_aarch64": binfmt,
             "checks": checks}

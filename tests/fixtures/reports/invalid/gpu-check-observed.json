@@ -62,7 +62,7 @@
       "summary": "Native ARM64 Linux: containers run linux/arm64 without emulation."
     },
     {
-      "detail": "ARM64 user-space emulation does not emulate a Jetson GPU. Use a physical Jetson for these checks.",
+      "detail": "ARM64 user-space emulation or a native ARM64 run does not provide a Jetson GPU. Use a physical Jetson for these checks.",
       "evidence": "observed",
       "id": "jetson.gpu",
       "outcome": "REQUIRES_HARDWARE",
