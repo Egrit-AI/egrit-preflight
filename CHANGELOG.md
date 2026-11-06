@@ -5,6 +5,8 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Docs: the README quickstart `smoke` example now includes `--pull`. On a machine without the image, `smoke` without it
+  reports `smoke.arch: UNKNOWN` (#5).
 - Docs: `docs/where-it-fits.md` no longer links Egrit's Preflight journey guide, which is not public yet and did not open; the page says it will be linked when the guide is public. Nothing else in the section changes.
 - Docs: `docs/where-it-fits.md` replaces "Optional: keeping a report with a plan" with "Optional: Egrit alongside
   Preflight": what Egrit's separate, optional client can do around this tool (return one of these target records
