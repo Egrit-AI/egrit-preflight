@@ -38,7 +38,7 @@ You also need Docker (Docker Engine on Linux, Docker Desktop on macOS). Setup: [
 ```sh
 egrit-preflight doctor                        # can this machine run linux/arm64 containers?
 egrit-preflight image --image IMAGE_REF       # inspect an image; nothing is pulled or run
-egrit-preflight smoke --image IMAGE_REF --yes # run one CPU-only ARM64 test (explicit consent)
+egrit-preflight smoke --image IMAGE_REF --pull --yes # run one CPU-only ARM64 test (explicit consent)
 egrit-preflight report --json --image IMAGE_REF --smoke --pull --yes -o report.json
 ```
 
