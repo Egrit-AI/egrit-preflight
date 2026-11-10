@@ -13,7 +13,7 @@ state of the development version, not a promise of dates.
 - [x] Docker, Buildx and daemon detection with remediation. *AC: tests for missing CLI, stopped daemon, missing Buildx.*
 - [x] QEMU/binfmt detection, never installed automatically. *AC: test asserts `doctor` never runs `docker run`.*
 - [x] Locked-down `smoke` with timeout, digest pinning, consent. *AC: tests assert the flag set; real run printed `aarch64`.*
-- [ ] Run on native ARM64 and Apple Silicon. *AC: CI job `real ARM64 smoke (native arm64)` green (done, run 3); one macOS Docker Desktop manual run recorded in verification.md (open).*
+- [x] Run on native ARM64 and Apple Silicon. *AC: CI job `real ARM64 smoke (native arm64)` green (done, run 3); one macOS Docker Desktop manual run recorded in verification.md (done: reported by a contributor on Apple Silicon, 2026-10-31; an Intel Mac is still not verified).*
 - [x] Allowlisted `python-import` test that imports a named module inside the image. *AC: allowlist entry plus tests; no network, no GPU.*
 
 ## M3: Jetson Compatibility Evidence

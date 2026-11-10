@@ -8,6 +8,8 @@ repository; entries after it refer to this repository.
 - `doctor`: the `jetson.gpu` detail now says "ARM64 user-space emulation or a native ARM64 run does not provide a
   Jetson GPU". It used to mention only emulation, which is wrong on Apple Silicon and native ARM64 Linux, where nothing
   is emulated. Text only; no outcome changes. The report fixtures are regenerated (#5).
+- Docs: the README quickstart `smoke` example now includes `--pull`. On a machine without the image, `smoke` without it
+  reports `smoke.arch: UNKNOWN` (#5).
 - Docs: `docs/where-it-fits.md` no longer links Egrit's Preflight journey guide, which is not public yet and did not open; the page says it will be linked when the guide is public. Nothing else in the section changes.
 - Docs: `docs/where-it-fits.md` replaces "Optional: keeping a report with a plan" with "Optional: Egrit alongside
   Preflight": what Egrit's separate, optional client can do around this tool (return one of these target records

@@ -1,6 +1,6 @@
 # What has been verified
 
-Last updated: 2026-10-31. Version 0.1.0. CI results below are for `f1887df`, the last code change before v0.1.0.
+Last updated: 2026-11-09. Version 0.1.0. CI results below are for `f1887df`, the last code change before v0.1.0.
 
 ## Verified by running it
 
@@ -69,6 +69,25 @@ image, read from its registry with no Docker daemon running and nothing pulled:
   CUDA or TensorRT comparison. The written example is [target-example.md](target-example.md); the report is
   [example-target-report.json](example-target-report.json).
 
+## Reported from an Apple Silicon Mac with Docker Desktop (contributor, 2026-10-31)
+
+A contributor ([sa3301](https://github.com/sa3301)) ran the README quickstart on an Apple Silicon Mac and posted the
+outputs on [issue #5](https://github.com/Egrit-AI/egrit-preflight/issues/5#issuecomment-6546163700). The maintainers did
+not run this and have not reproduced it; the files are the contributor's, not ours.
+
+Host: macOS 26.5.2, Docker Desktop 4.97.0 (Docker 29.9.2, Buildx 0.38.1), Python 3.14.6, `egrit-preflight` 0.1.0.
+
+- `doctor`: `arm64.execution` PASS with mode `macos-apple-silicon-vm` (linux/arm64 containers run in Docker's Linux
+  VM, without x86 emulation); `jetson.gpu` REQUIRES_HARDWARE; overall PASS.
+- `smoke` against `ubuntu:24.04@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852`, pulled with
+  `--pull`: `smoke.arch` PASS (the container printed `aarch64`); `jetson.gpu` REQUIRES_HARDWARE.
+- `report` with that pinned image, `--smoke --pull --yes`: smoke ran (`smoke_executed` true); overall UNKNOWN, from the
+  expected `jetson.gpu`, target and provenance items. The same command with the unpinned `ubuntu:24.04` refused to run
+  the smoke test and gave overall FAIL (`reference.pinned`), which is how the README example's missing `--pull` and
+  pinning were found.
+- Not checked: an Intel Mac (none was available to the contributor), and anything on a Jetson. Docker Desktop on
+  Windows or Linux is also not verified.
+
 ## Verified by CI (GitHub Actions, run 27 on `main` at `f1887df`, 2026-10-30)
 
 All 15 jobs passed: https://github.com/Egrit-AI/egrit-preflight/actions/runs/41140016572. `f1887df` is the last code
@@ -86,8 +105,9 @@ change before v0.1.0; the commit the tag points at adds only this record. The fi
 
 ## Not verified
 
-- Docker Desktop on any platform (the macOS runners run the unit and install jobs only, without Docker), rootless
-  Docker, remote Docker contexts (the QEMU check reads the local machine).
+- Docker Desktop on an Intel Mac, Windows or Linux, and any Docker Desktop run by the maintainers (the macOS runners
+  run the unit and install jobs only, without Docker; one Apple Silicon run is reported above, by a contributor),
+  rootless Docker, remote Docker contexts (the QEMU check reads the local machine).
 - Any L4T behaviour and everything on a Jetson: CUDA, TensorRT, GPU, device nodes, performance. These are
   `REQUIRES_HARDWARE`. The registry read of one L4T image is verified (above); nothing from that image has run anywhere.
 - Install from PyPI: nothing is published to PyPI.
