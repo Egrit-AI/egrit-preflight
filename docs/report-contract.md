@@ -1,6 +1,6 @@
 # The report contract (schema version 1)
 
-Last updated: 2026-10-30 (rule 11: a report has checks and a `jetson.gpu` check, #45) · 2026-10-30 (rule 2: `jetson.gpu` evidence is `none`, #44) · 2026-10-28 (rule 10, #32).
+Last updated: 2026-11-11 (rule 13 and `target.record.module_id`, additive) · 2026-10-30 (rule 11: a report has checks and a `jetson.gpu` check, #45) · 2026-10-30 (rule 2: `jetson.gpu` evidence is `none`, #44) · 2026-10-28 (rule 10, #32).
 
 `egrit-preflight report --json` prints one JSON document. This page says what a program that reads it may rely on, and
 what it must not assume. It is for CI scripts, dashboards and importers, whoever writes them. Nothing here needs an
@@ -101,6 +101,10 @@ Use `section` and `id` together when you need to tell them apart.
     `null` or 1 to 32 of `a-z0-9_-`; each `image.platforms` entry is `os/architecture[/variant]` of such tokens; each
     attestation's `predicate_types` entry is 1 to 200 printable ASCII characters without spaces. A report with an
     escape sequence, a bidi override or an oversized value there is rejected.
+13. `target.record.module_id`, when present, is `null` or a module id: lowercase letters and digits joined by hyphens,
+    at most 64 characters, such as `jetson-orin-nano-8gb-devkit`. It is what the `--target` file's own `module_id`
+    says, or `null` when the file has none or a malformed one; it is never derived from the record's `name`. A report
+    written before this field existed has no `module_id` key and stays valid; a consumer reads that as not stated.
 
 ## What a consumer may import
 
@@ -115,7 +119,7 @@ A consumer should import only this allowlist and drop everything else:
 - `schema_version`, `tool.name`, `tool.version`, `timestamp`, `hardware_verified`, `overall`, `requires_hardware`
 - `host.os`, `host.architecture`, `host.execution_mode`
 - `docker.cli_version`, `docker.daemon_version`, `docker.buildx_version`, `docker.daemon_architecture`
-- `target.architecture` and, from `target.record`, only `jetpack`, `jetson_linux` and `status`
+- `target.architecture` and, from `target.record`, only `jetpack`, `jetson_linux`, `status` and `module_id`
 - `image.reference`, `image.digest`, `image.architecture`, `image.platforms`, and from `image.provenance`: `status`,
   `signature_verified`, and each attestation's `predicate_types` and `subject_digest`
 - for each check: `id`, `section`, `outcome`, `evidence`, `summary`; for each uncertainty: the same minus `evidence`

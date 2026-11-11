@@ -1,5 +1,6 @@
 {
   "name": "Jetson Orin Nano 8GB developer kit, JetPack 6.2 (declared, not read from a device)",
+  "module_id": "jetson-orin-nano-8gb-devkit",
   "architecture": "aarch64",
   "software": {
     "jetpack": "6.2",

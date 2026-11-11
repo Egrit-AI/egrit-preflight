@@ -42,6 +42,17 @@ def version_tuple(text):
     return tuple(int(p) for p in m.group(1).split(".")) if m else ()
 
 
+# A module id names the Jetson module a target record is for, such as jetson-orin-nano-8gb-devkit: lowercase words of
+# letters and digits joined by hyphens, at most 64 characters. Anything else is dropped to null, never guessed from the
+# record's free-text name, so a consumer comparing modules sees "not stated" rather than a wrong module.
+MODULE_ID_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+
+
+def module_id(value):
+    """The record's module id, or None when it is absent or not a well-formed id."""
+    return value if isinstance(value, str) and len(value) <= 64 and MODULE_ID_RE.fullmatch(value) else None
+
+
 def load_target(path):
     """Read a target record. Returns (record, error)."""
     try:
@@ -100,7 +111,8 @@ def inspect_image(ref, target_path=None, require_digest=False, runner=default_ru
     result["target"] = None if not target else {
         "name": safe.as_str(target.get("name")), "status": safe.as_str(target.get("status"), 40),
         "jetpack": safe.as_str(_get(target, "software", "jetpack"), 40),
-        "jetson_linux": safe.as_str(_get(target, "software", "jetson_linux"), 40)}
+        "jetson_linux": safe.as_str(_get(target, "software", "jetson_linux"), 40),
+        "module_id": module_id(target.get("module_id"))}
 
     index = _inspect_manifest(ref, result, checks, runner)
     if index is None and result.get("source") == "local image":

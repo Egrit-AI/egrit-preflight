@@ -508,3 +508,31 @@ class Provenance(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TargetModuleId(unittest.TestCase):
+    """A target record may name its Jetson module with module_id; a malformed one is null, never guessed."""
+
+    def run_with(self, **extra):
+        d = tempfile.mkdtemp()
+        p = Path(d) / "t.json"
+        p.write_text(json.dumps({"name": "Jetson Orin Nano 8GB developer kit", "status": "declared",
+                                 "software": {"jetpack": "6.2", "jetson_linux": "36.4.3"}, **extra}))
+        return inspect_image(f"ubuntu@{DIGEST}", str(p), runner=local())["target"]
+
+    def test_a_well_formed_module_id_is_carried(self):
+        self.assertEqual(self.run_with(module_id="jetson-orin-nano-8gb-devkit")["module_id"],
+                         "jetson-orin-nano-8gb-devkit")
+
+    def test_an_absent_module_id_is_null_and_not_read_from_the_name(self):
+        self.assertIsNone(self.run_with()["module_id"])
+
+    def test_a_malformed_module_id_is_null(self):
+        for value in ("Jetson Orin Nano", "jetson_orin", "orin-", "x" * 65, ["jetson-orin"], "orin\x1b[2J"):
+            self.assertIsNone(self.run_with(module_id=value)["module_id"], repr(value))
+
+    def test_module_id_changes_no_check(self):
+        # module_id is carried for a consumer to compare; the tool itself has no module check to pass or fail.
+        r1 = self.run_with(module_id="jetson-orin-nano-8gb-devkit")
+        r2 = self.run_with()
+        self.assertEqual({k: v for k, v in r1.items() if k != "module_id"}, {k: v for k, v in r2.items() if k != "module_id"})
