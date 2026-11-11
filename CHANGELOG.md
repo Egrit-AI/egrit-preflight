@@ -5,6 +5,12 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Report: a target record may name its Jetson module with an optional `module_id` (for example
+  `jetson-orin-nano-8gb-devkit`), carried as `target.record.module_id` and added to the consumer allowlist. Additive:
+  schema version 1 is unchanged, reports without the key stay valid, and no check is added or changed. A malformed
+  value is `null` and contract rule 13 refuses a report that carries anything else. `examples/target-orin-nano-jetpack-6.2.json`
+  now states its module, so its hash changes; the report fixtures are regenerated. A consumer comparing a device
+  result with a report can now tell one Jetson module from another.
 - `doctor`: the `jetson.gpu` detail now says "ARM64 user-space emulation or a native ARM64 run does not provide a
   Jetson GPU". It used to mention only emulation, which is wrong on Apple Silicon and native ARM64 Linux, where nothing
   is emulated. Text only; no outcome changes. The report fixtures are regenerated (#5).

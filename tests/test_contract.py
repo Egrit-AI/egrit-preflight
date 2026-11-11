@@ -224,7 +224,7 @@ class ConsumerAllowlist(unittest.TestCase):
             keys = self.walk_keys(contract.allowlisted_view(json.loads(text)), set())
             self.assertFalse(keys & set(self.FREE_TEXT), f"{name}: {keys & set(self.FREE_TEXT)}")
             record = contract.allowlisted_view(json.loads(text))["target"].get("record")
-            self.assertTrue(record is None or set(record) <= {"jetpack", "jetson_linux", "status"},
+            self.assertTrue(record is None or set(record) <= {"jetpack", "jetson_linux", "status", "module_id"},
                             f"{name}: the target record's free-text name must not be imported")
 
     def test_secrets_in_every_free_text_channel_stay_out_of_the_view(self):
@@ -287,3 +287,29 @@ class BoundedReading(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ModuleId(unittest.TestCase):
+    """Rule 13: the record's module_id reaches a consumer through the allowlist, so it is null or a well-formed id."""
+
+    def declared(self):
+        return json.loads(valid()["declared-target"])
+
+    def test_the_declared_target_fixture_carries_the_module_id_into_the_view(self):
+        view = contract.allowlisted_view(self.declared())
+        self.assertEqual(view["target"]["record"]["module_id"], "jetson-orin-nano-8gb-devkit")
+
+    def test_a_report_without_module_id_stays_valid(self):
+        # Reports written before module_id existed have no such key; they must still read.
+        doc = self.declared()
+        del doc["target"]["record"]["module_id"]
+        self.assertEqual(contract.check_report(doc), [])
+        self.assertNotIn("module_id", contract.allowlisted_view(doc)["target"]["record"])
+
+    def test_null_is_accepted_and_a_malformed_module_id_is_refused(self):
+        doc = self.declared()
+        doc["target"]["record"]["module_id"] = None
+        self.assertEqual(contract.check_report(doc), [])
+        for bad_value in ("Jetson Orin Nano", "jetson_orin", "-x", "x" * 65, 7, "orin\x1b[2J"):
+            doc["target"]["record"]["module_id"] = bad_value
+            self.assertTrue(any("module_id" in p for p in contract.check_report(doc)), repr(bad_value))

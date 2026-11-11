@@ -104,6 +104,11 @@ interrupted.
 `FAIL`, because the report is about linux/arm64 only; an absent one adds no check. Versions you copy from NVIDIA release notes are declarations; the tool does not
 embed a JetPack compatibility table, because one it cannot keep verified would be worse than none.
 
+An optional `module_id` names the Jetson module the record is for, such as `jetson-orin-nano-8gb-devkit`: lowercase
+letters and digits joined by hyphens, at most 64 characters. It adds no check. The report carries it in
+`target.record.module_id` so that a program comparing a later device result with this report can tell one module from
+another; a missing or malformed value is `null`, never read from the record's `name`.
+
 [examples/targets/](examples/targets/README.md) holds a declared record for each recent JetPack release (6.2.1, 6.2,
 6.1 and 5.1.8), each citing NVIDIA's release page and the date it was read. Pass the one your device runs, for example
 `--target examples/targets/jetpack-6.2.json`, and check it against what the device reports.

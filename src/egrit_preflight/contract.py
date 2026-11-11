@@ -25,6 +25,7 @@ SECTIONS = ("doctor", "image", "smoke")
 TIMESTAMP_RE = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z")
 DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}")
 CHECK_ID_RE = re.compile(r"[a-z0-9][a-z0-9_.-]{0,79}")
+MODULE_ID_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")  # the same rule as image.MODULE_ID_RE
 
 # What a consumer may import. Everything else in a report is text that came from the machine, the image or a registry
 # (check `detail` and `command`, the top-level `commands`, image labels and environment values, `limitations`). It is
@@ -38,7 +39,7 @@ ALLOWLIST = {
     "requires_hardware": True,
     "host": {"os": True, "architecture": True, "execution_mode": True},
     "docker": {"cli_version": True, "daemon_version": True, "buildx_version": True, "daemon_architecture": True},
-    "target": {"architecture": True, "record": {"jetpack": True, "jetson_linux": True, "status": True}},
+    "target": {"architecture": True, "record": {"jetpack": True, "jetson_linux": True, "status": True, "module_id": True}},
     "image": {"reference": True, "digest": True, "architecture": True, "platforms": True,
               "provenance": {"status": True, "signature_verified": True,
                              "attestations": [{"predicate_types": True, "subject_digest": True}]}},
@@ -103,6 +104,13 @@ def check_report(doc):
     if isinstance(doc.get("target"), dict):
         need(doc["target"].get("architecture") == "linux/arm64",
              "target.architecture must be 'linux/arm64': a version 1 report is about linux/arm64 only")
+        # Rule 13: the allowlist exports the record's module_id, so it must be null or a well-formed module id. A report
+        # from before it existed has no module_id at all, which is read as not stated.
+        record = doc["target"].get("record")
+        if isinstance(record, dict) and "module_id" in record:
+            need(record["module_id"] is None or (isinstance(record["module_id"], str) and len(record["module_id"]) <= 64
+                                                 and bool(MODULE_ID_RE.fullmatch(record["module_id"]))),
+                 "target.record.module_id must be null or a module id such as jetson-orin-nano-8gb-devkit")
     need(doc.get("image") is None or isinstance(doc.get("image"), dict), "image must be an object or null")
     for key in ("limitations", "uncertainties", "commands", "requires_hardware"):
         need(isinstance(doc.get(key), list), f"{key} must be an array")
