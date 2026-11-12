@@ -3,7 +3,8 @@ name: Release
 # package carries, that the tagged commit is on main and that the release notes exist, runs the unit tests, and builds
 # the wheel and sdist with a pinned build backend. `publish` is the only job that can write, and it runs no build code:
 # it downloads the files `build` uploaded and creates the GitHub release with docs/releases/<tag>.md as its notes.
-# Publishing to PyPI is not here yet (#4): it needs the trusted publisher to exist first, and no token is stored here.
+# `pypi` uploads the same wheel and sdist to PyPI by trusted publishing (#4): GitHub's OIDC token, issued only to this
+# job in the `pypi` environment, is exchanged for a short-lived upload token. No PyPI token is stored anywhere.
 on:
   push:
     tags: ["v*"]
@@ -65,3 +66,27 @@ jobs:
           ls -l release
           gh release create "$GITHUB_REF_NAME" release/*.whl release/*.tar.gz --repo "$GITHUB_REPOSITORY" --verify-tag \
             --title "Egrit-Preflight $GITHUB_REF_NAME" --notes-file release/NOTES.md
+
+  pypi:
+    name: publish to PyPI
+    needs: build
+    runs-on: ubuntu-24.04
+    # The PyPI trusted publisher names this environment; a required reviewer on it makes each upload wait for approval.
+    environment:
+      name: pypi
+      url: https://pypi.org/project/egrit-preflight/
+    permissions:
+      id-token: write
+      actions: read
+    steps:
+      - name: Download what build produced, with no checkout and no build code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" --name release --dir release
+          mkdir dist
+          cp release/*.whl release/*.tar.gz dist/
+          ls -l dist
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+        with:
+          packages-dir: dist/

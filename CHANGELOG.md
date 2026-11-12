@@ -3,8 +3,12 @@
 Issue and pull request numbers in entries up to the public release of 2026-10-30 refer to the private development
 repository; entries after it refer to this repository.
 
-## Unreleased
+## 0.1.0 (2026-11-12)
 
+First release. Standard library only, Python 3.9 or later, Apache-2.0.
+
+- Release workflow: a `pypi` job uploads the same wheel and sdist to PyPI by trusted publishing, in the `pypi`
+  environment, running no build code and storing no token. The README installs with `pipx install egrit-preflight` (#4).
 - Report: a target record may name its Jetson module with an optional `module_id` (for example
   `jetson-orin-nano-8gb-devkit`), carried as `target.record.module_id` and added to the consumer allowlist. Additive:
   schema version 1 is unchanged, reports without the key stay valid, and no check is added or changed. A malformed
@@ -33,11 +37,6 @@ repository; entries after it refer to this repository.
   image does not set `L4T_VERSION`, so advice that dropped the tag also dropped the `target.l4t` comparison. Text only;
   no outcome changes. The `mutable-tag.json` fixture is regenerated (#22).
 - Examples: a declared target record for JetPack 6.2.3 (Jetson Linux 36.5.2, CUDA 12.6.10, TensorRT 10.3.0), relayed from NVIDIA's release pages as read on 2026-10-29 and flagged for a maintainer re-read; no code change.
-
-## 0.1.0 (2026-10-30)
-
-First release. Standard library only, Python 3.9 or later, Apache-2.0.
-
 - Security review of 2026-10-30 (the code changed since the review of 2026-10-26), all findings fixed:
   - Report contract (additive, `schema_version` stays 1): new rule 12. `image.architecture`, `image.platforms` and
     attestation `predicate_types` come from a registry and are exported by the allowlist, so the reference reader now
