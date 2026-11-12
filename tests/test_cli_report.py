@@ -97,18 +97,21 @@ class Cli(unittest.TestCase):
         self.assertEqual(validate(json.loads(p.read_text()), SCHEMA), [])
         self.assertIn("Report written", out)
 
-    def test_report_json_output_file_prints_summary_not_json(self):
-        # #30: with -o, --json does not also print the report; the file is the same bytes as stdout without -o.
+    def test_report_output_file_with_and_without_json(self):
+        # #30: -o writes the file and prints a summary; --json also prints the whole report. The file is the same
+        # bytes either way, and the same bytes as stdout without -o.
         import tempfile
-        p = Path(tempfile.mkdtemp()) / "r.json"
+        d = Path(tempfile.mkdtemp())
         with mock.patch.dict(os.environ, {"SOURCE_DATE_EPOCH": "1700000000"}):
-            code, out, _ = run_cli(["report", "--json", "--image", PINNED, "-o", str(p)], arm_rules())
-            plain_code, stdout_json, _ = run_cli(["report", "--json", "--image", PINNED], arm_rules())
-        self.assertEqual(code, plain_code)
-        self.assertEqual(p.read_text(), stdout_json)
-        self.assertIn("Report written to " + str(p), out)
-        self.assertNotIn('"checks"', out)
-        self.assertNotIn("{", out)
+            plain_code, stdout_json, _ = run_cli(["report", "--image", PINNED], arm_rules())
+            code_s, out_s, _ = run_cli(["report", "--image", PINNED, "-o", str(d / "s.json")], arm_rules())
+            code_j, out_j, _ = run_cli(["report", "--json", "--image", PINNED, "-o", str(d / "j.json")], arm_rules())
+        self.assertEqual({code_s, code_j}, {plain_code})
+        self.assertEqual((d / "s.json").read_text(), stdout_json)
+        self.assertEqual((d / "j.json").read_text(), stdout_json)
+        self.assertIn("Report written to " + str(d / "s.json"), out_s)
+        self.assertNotIn("{", out_s)
+        self.assertEqual(out_j, stdout_json)
 
     def test_module_entrypoint_runs_without_docker(self):
         env = dict(os.environ, PYTHONPATH=str(ROOT / "src"), PATH="/nonexistent")

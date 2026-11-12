@@ -5,11 +5,10 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
-- `report -o FILE` with `--json` no longer also prints the whole report to the terminal. It prints the short summary
-  ("Report written to ..."), as it already did without `--json`, which is what the `-o` help and the README quickstart
-  said. The file is unchanged byte for byte and exit codes are unchanged; when the file cannot be written the report is
-  still printed, as before. A script that read the JSON from standard output while also passing `-o` should read the
-  file instead (#30).
+- `report -o FILE`: the help now says what the command does. The report is written to the file and a short summary is
+  printed; with `--json` the whole report is printed to standard output as well. No behaviour changes: the file, the
+  output and the exit codes are as before. The README quickstart and `docs/where-it-fits.md` drop `--json` from their
+  `-o` commands, so a first run no longer fills the terminal with JSON; the file they write is unchanged (#30).
 - Report: a target record may name its Jetson module with an optional `module_id` (for example
   `jetson-orin-nano-8gb-devkit`), carried as `target.record.module_id` and added to the consumer allowlist. Additive:
   schema version 1 is unchanged, reports without the key stay valid, and no check is added or changed. A malformed

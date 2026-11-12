@@ -39,7 +39,7 @@ You also need Docker (Docker Engine on Linux, Docker Desktop on macOS). Setup: [
 egrit-preflight doctor                        # can this machine run linux/arm64 containers?
 egrit-preflight image --image IMAGE_REF       # inspect an image; nothing is pulled or run
 egrit-preflight smoke --image IMAGE_REF --pull --yes # run one CPU-only ARM64 test (explicit consent)
-egrit-preflight report --json --image IMAGE_REF --smoke --pull --yes -o report.json
+egrit-preflight report --image IMAGE_REF --smoke --pull --yes -o report.json
 ```
 
 Use an immutable reference, and keep the tag beside the digest (`name:tag@sha256:<digest>`): the digest fixes the
@@ -94,7 +94,8 @@ interrupted.
   `--allow-mutable`.
 - `report [--image REF] [--smoke --yes] [--pull] [--json] [-o FILE]`: the above as one JSON document
   ([schema](schema/report.schema.json), [example](docs/example-report.json)). Set `SOURCE_DATE_EPOCH` for byte-identical
-  output. `-o FILE` writes the JSON to the file and prints only a short summary, with or without `--json`.
+  output. The report is always JSON. With `-o FILE` it goes to the file and the terminal gets a short summary; add
+  `--json` to print the whole report to standard output as well.
 
 ### Target record
 

@@ -50,7 +50,7 @@ does):
 - name: Preflight
   run: |
     REF="myimage@$(docker buildx imagetools inspect myimage:tag --format '{{.Manifest.Digest}}')"
-    egrit-preflight report --image "$REF" --smoke --pull --yes --json -o report.json
+    egrit-preflight report --image "$REF" --smoke --pull --yes -o report.json
 - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
   with:
     name: preflight-report
@@ -90,7 +90,7 @@ Egrit's commands.
 | | With Preflight alone | With Egrit's client, optional, once public |
 |---|---|---|
 | Choose a target record | Copy one from [examples/targets](../examples/targets/README.md), or the Orin Nano example | The assistant asks for your device, your exact JetPack release and whether it is installed or planned, then returns the same file from this repository, unchanged, with its source and date. It never guesses a release. |
-| Make a report | `egrit-preflight report --json --image IMAGE_REF --target FILE -o report.json`, on your machine | The same command, which you run. Egrit does not run Preflight, start Docker or read a device. |
+| Make a report | `egrit-preflight report --image IMAGE_REF --target FILE -o report.json`, on your machine | The same command, which you run. Egrit does not run Preflight, start Docker or read a device. |
 | See what sharing would send | Read the report yourself | The client lists the fields that would leave your machine and sends nothing. |
 | Keep reports with a plan | Keep the files yourself | The client keeps a report you have reviewed in a plan stored on your machine, beside earlier ones, and lists a next check for every `FAIL`, `UNKNOWN` and `REQUIRES_HARDWARE`. |
 

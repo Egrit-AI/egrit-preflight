@@ -90,7 +90,7 @@ def build_parser():
     r.add_argument("--pull", action="store_true")
     r.add_argument("--allow-mutable", action="store_true")
     r.add_argument("--yes", action="store_true")
-    r.add_argument("-o", "--output", help="write the JSON report to this file instead of stdout, and print a short summary")
+    r.add_argument("-o", "--output", help="write the report to this file; print a short summary instead, or the whole report as well with --json")
     common(r)
     return p
 
@@ -176,8 +176,8 @@ def _run(args, out, err, hooks):
             print(f"egrit-preflight: cannot write the report: {safe.clean(exc)}", file=err)
             out.write(text)  # the run is not lost
             return 2
-    if not args.output:
+    if args.json or not args.output:
         out.write(text)
-    else:  # the file holds the JSON; the terminal gets the short summary, with or without --json
+    else:
         _human("Report written to " + args.output, rep["checks"], out)
     return _exit(rep["checks"], args.strict)
