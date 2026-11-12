@@ -5,6 +5,12 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+Nothing yet.
+
+## 0.1.0 (2026-11-12)
+
+First release. Standard library only, Python 3.9 or later, Apache-2.0.
+
 - `report -o FILE`: the help now says what the command does. The report is written to the file and a short summary is
   printed; with `--json` the whole report is printed to standard output as well. No behaviour changes: the file, the
   output and the exit codes are as before. The README quickstart and `docs/where-it-fits.md` drop `--json` from their
@@ -37,10 +43,6 @@ repository; entries after it refer to this repository.
   image does not set `L4T_VERSION`, so advice that dropped the tag also dropped the `target.l4t` comparison. Text only;
   no outcome changes. The `mutable-tag.json` fixture is regenerated (#22).
 - Examples: a declared target record for JetPack 6.2.3 (Jetson Linux 36.5.2, CUDA 12.6.10, TensorRT 10.3.0), relayed from NVIDIA's release pages as read on 2026-10-29 and flagged for a maintainer re-read; no code change.
-
-## 0.1.0 (2026-10-30)
-
-First release. Standard library only, Python 3.9 or later, Apache-2.0.
 
 - Security review of 2026-10-30 (the code changed since the review of 2026-10-26), all findings fixed:
   - Report contract (additive, `schema_version` stays 1): new rule 12. `image.architecture`, `image.platforms` and
