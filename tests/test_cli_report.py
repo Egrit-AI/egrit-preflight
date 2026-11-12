@@ -97,6 +97,19 @@ class Cli(unittest.TestCase):
         self.assertEqual(validate(json.loads(p.read_text()), SCHEMA), [])
         self.assertIn("Report written", out)
 
+    def test_report_json_output_file_prints_summary_not_json(self):
+        # #30: with -o, --json does not also print the report; the file is the same bytes as stdout without -o.
+        import tempfile
+        p = Path(tempfile.mkdtemp()) / "r.json"
+        with mock.patch.dict(os.environ, {"SOURCE_DATE_EPOCH": "1700000000"}):
+            code, out, _ = run_cli(["report", "--json", "--image", PINNED, "-o", str(p)], arm_rules())
+            plain_code, stdout_json, _ = run_cli(["report", "--json", "--image", PINNED], arm_rules())
+        self.assertEqual(code, plain_code)
+        self.assertEqual(p.read_text(), stdout_json)
+        self.assertIn("Report written to " + str(p), out)
+        self.assertNotIn('"checks"', out)
+        self.assertNotIn("{", out)
+
     def test_module_entrypoint_runs_without_docker(self):
         env = dict(os.environ, PYTHONPATH=str(ROOT / "src"), PATH="/nonexistent")
         p = subprocess.run([sys.executable, "-m", "egrit_preflight", "doctor", "--json"], capture_output=True,

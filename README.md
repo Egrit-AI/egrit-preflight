@@ -94,7 +94,7 @@ interrupted.
   `--allow-mutable`.
 - `report [--image REF] [--smoke --yes] [--pull] [--json] [-o FILE]`: the above as one JSON document
   ([schema](schema/report.schema.json), [example](docs/example-report.json)). Set `SOURCE_DATE_EPOCH` for byte-identical
-  output.
+  output. `-o FILE` writes the JSON to the file and prints only a short summary, with or without `--json`.
 
 ### Target record
 
