@@ -90,7 +90,7 @@ def build_parser():
     r.add_argument("--pull", action="store_true")
     r.add_argument("--allow-mutable", action="store_true")
     r.add_argument("--yes", action="store_true")
-    r.add_argument("-o", "--output", help="write the report to this file instead of stdout")
+    r.add_argument("-o", "--output", help="write the report to this file; print a short summary instead, or the whole report as well with --json")
     common(r)
     return p
 

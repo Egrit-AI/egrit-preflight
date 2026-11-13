@@ -1,8 +1,8 @@
 # What has been verified
 
 Last updated: 2026-11-12. Version 0.1.0. The CI record below is for `f1887df` (2026-10-30). 0.1.0 also includes the
-changes merged after it; CI passed on `main` at `b413118` after them (run 56, 2026-11-11,
-https://github.com/Egrit-AI/egrit-preflight/actions/runs/43120631615), and the Release workflow runs the unit tests
+changes merged after it; CI passed on `main` at `b45684b` after them (run 62, 2026-11-12,
+https://github.com/Egrit-AI/egrit-preflight/actions/runs/43321482953), and the Release workflow runs the unit tests
 and a clean install again on the tagged commit.
 
 ## Verified by running it
