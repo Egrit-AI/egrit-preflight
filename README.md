@@ -20,7 +20,14 @@ the NVIDIA driver, the device nodes or the host-provided CUDA/TensorRT libraries
 
 ## Install
 
-Needs Python 3.9 or later and no other Python packages.
+Needs Python 3.9 or later and no other Python packages. From PyPI (from v0.1.0 on):
+
+```sh
+pipx install egrit-preflight      # or: pip install egrit-preflight
+egrit-preflight --version
+```
+
+Or from a checkout of this repository:
 
 ```sh
 git clone <this repository>
