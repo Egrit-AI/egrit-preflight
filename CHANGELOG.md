@@ -11,8 +11,9 @@ Nothing yet.
 
 First release. Standard library only, Python 3.9 or later, Apache-2.0.
 
-- Release workflow: a `pypi` job uploads the same wheel and sdist to PyPI by trusted publishing, in the `pypi`
-  environment, running no build code and storing no token. The README installs with `pipx install egrit-preflight` (#4).
+- Release workflow: a `pypi` job can upload the same wheel and sdist to PyPI by trusted publishing, in the `pypi`
+  environment, running no build code and storing no token. No trusted publisher exists on PyPI yet, so 0.1.0 is not
+  published there: install the wheel attached to the GitHub release, or from a checkout (#4).
 - `report -o FILE`: the help now says what the command does. The report is written to the file and a short summary is
   printed; with `--json` the whole report is printed to standard output as well. No behaviour changes: the file, the
   output and the exit codes are as before. The README quickstart and `docs/where-it-fits.md` drop `--json` from their
