@@ -7,7 +7,7 @@ repository; entries after it refer to this repository.
 
 Nothing yet.
 
-## 0.1.0 (2026-11-12)
+## 0.1.0 (2026-11-13)
 
 First release. Standard library only, Python 3.9 or later, Apache-2.0.
 
