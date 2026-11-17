@@ -5,7 +5,7 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
-Nothing yet.
+- Conflicting L4T declarations in an image tag and its `L4T_VERSION` environment now give `target.l4t` UNKNOWN instead of silently preferring the tag (#33). Report schema v1 is unchanged; matching declarations and single-source comparisons keep their existing results. No hardware compatibility is established.
 
 ## 0.1.0 (2026-11-13)
 

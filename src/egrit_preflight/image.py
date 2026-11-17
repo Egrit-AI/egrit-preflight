@@ -443,9 +443,16 @@ def _compare_target(ref, target, target_ok, result, checks):
         checks.append(o.check("target.jetpack", o.PASS, f"Target JetPack {jp} (as declared in the record).",
                               evidence=grade))
 
-    img_l4t = l4t_from_reference(ref) or version_tuple(deps_env.get("L4T_VERSION"))
+    tag_l4t = l4t_from_reference(ref)
+    env_l4t = version_tuple(deps_env.get("L4T_VERSION"))
+    img_l4t = tag_l4t or env_l4t
     tgt_l4t = version_tuple(jl)
-    if not tgt_l4t:
+    if tag_l4t and env_l4t and tag_l4t != env_l4t:
+        checks.append(o.check("target.l4t", o.UNKNOWN,
+                              "Image tag and L4T_VERSION declare different L4T releases; no agreement established.",
+                              evidence=grade,
+                              remediation="Resolve the conflicting image declarations before comparing the target."))
+    elif not tgt_l4t:
         checks.append(o.check("target.l4t", o.UNKNOWN, "Target record does not state a Jetson Linux (L4T) version.",
                               remediation="Add software.jetson_linux to the target record."))
     elif not img_l4t:

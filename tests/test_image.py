@@ -37,6 +37,26 @@ def single_platform(config_answer):
 
 
 class Image(unittest.TestCase):
+    def test_conflicting_l4t_tag_and_environment_never_pass(self):
+        t = target(software={"jetson_linux": "36.4.0"})
+        for env_version in ("35.4.1", "36.3.0", "36.4.1"):
+            for pinned in (False, True):
+                with self.subTest(env=env_version, pinned=pinned):
+                    ref = "nvcr.io/nvidia/l4t-base:r36.4.0" + ("@" + DIGEST if pinned else "")
+                    r = inspect_image(ref, t, runner=local(env=["L4T_VERSION=" + env_version]))
+                    check = by_id(r, "target.l4t")
+                    self.assertEqual(check["outcome"], "UNKNOWN")
+                    self.assertEqual(check["evidence"], "declared")
+                    self.assertIn("different L4T releases", check["summary"])
+
+    def test_agreeing_or_single_l4t_declarations_keep_existing_result(self):
+        t = target(software={"jetson_linux": "36.4.0"})
+        for ref, env in (("nvcr.io/nvidia/l4t-base:r36.4.0", ["L4T_VERSION=36.4.0"]),
+                         ("nvcr.io/nvidia/l4t-base:r36.4.0", []),
+                         (PINNED, ["L4T_VERSION=36.4.0"])):
+            with self.subTest(ref=ref, env=env):
+                self.assertEqual(by_id(inspect_image(ref, t, runner=local(env=env)), "target.l4t")["outcome"], "PASS")
+
     def test_invalid_references_fail_and_run_nothing(self):
         for bad_ref in ("", "-v /:/host", "ubuntu 24.04", "UBUNTU;rm", "a" * 300, "x@sha256:short"):
             fake = FakeRunner([])
