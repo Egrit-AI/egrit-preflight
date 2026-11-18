@@ -1,6 +1,6 @@
 # Roadmap
 
-Last updated: 2026-10-28. Four milestones, small issues, each with a measurable acceptance criterion. Status is the
+Last updated: 2026-11-18. Four milestones, small issues, each with a measurable acceptance criterion. Status is the
 state of the development version, not a promise of dates.
 
 ## M1: Packaging and Developer Experience
@@ -22,6 +22,7 @@ state of the development version, not a promise of dates.
 - [x] Record an image SBOM/provenance reference if the registry provides one. *AC: report field `image.provenance`, UNKNOWN when absent.*
 - [ ] A clearly limited NVIDIA L4T user-space example. *AC: runs only if the reference is reachable and pinned; documents host-library limits; no GPU claim.*
 - [x] Design note on targets other than an ARM64 Jetson, keeping report schema version 1 unchanged. *AC: [docs/target-neutral-design.md](target-neutral-design.md); synthetic x86-64 CPU and Jetson descriptions tested offline in `tests/test_target_neutral_design.py`.*
+- [x] Versioned vendor target profile as a companion record, keeping report schema version 1 and the CLI unchanged. *AC: [docs/vendor-target-profile.md](vendor-target-profile.md); synthetic profiles for missing, contradictory and non-equivalent configurations tested offline in `tests/test_profile.py`.*
 - [ ] Observed target records from a physical Jetson. *AC: `status: observed` record produced on a device; needs hardware.*
 
 ## M4: Public v0.1 Release

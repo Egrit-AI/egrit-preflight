@@ -1,0 +1,125 @@
+{
+  "document": "egrit-preflight vendor target profile",
+  "profile_version": "1",
+  "synthetic": true,
+  "identity": {
+    "vendor": "Example Vendor (synthetic)",
+    "product": "Edge Two",
+    "model": null,
+    "module": null,
+    "hardware_revision": null,
+    "software_revision": null,
+    "profile_revision": "1"
+  },
+  "facts": {
+    "architecture": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "os_distribution": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "os_build": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "abi": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "jetpack": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "jetson_linux": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "cuda": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "tensorrt": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "container_runtime": [
+      {
+        "value": null,
+        "evidence": "none",
+        "source_url": null,
+        "retrieved": null,
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ]
+  },
+  "required_interfaces": []
+}
