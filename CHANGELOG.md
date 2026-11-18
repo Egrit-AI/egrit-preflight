@@ -5,6 +5,7 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Vendor target profile, `profile_version` 1: a separate companion record for one identified hardware and software configuration, with a schema (`schema/vendor-target-profile.schema.json`), a reference reader (`egrit_preflight.profile`) and synthetic fixtures (#33). Additive: no CLI command reads it, and report schema v1, the consumer allowlist and the example target records are unchanged. A missing, contradicted or wrong-revision value gives UNKNOWN, an export to a `--target` record is always `declared`, and no hardware compatibility is established. See `docs/vendor-target-profile.md`.
 - Conflicting L4T declarations in an image tag and its `L4T_VERSION` environment now give `target.l4t` UNKNOWN instead of silently preferring the tag (#33). Report schema v1 is unchanged; matching declarations and single-source comparisons keep their existing results. No hardware compatibility is established.
 
 ## 0.1.0 (2026-11-13)

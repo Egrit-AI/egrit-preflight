@@ -1,0 +1,124 @@
+{
+  "document": "egrit-preflight vendor target profile",
+  "profile_version": "1",
+  "synthetic": true,
+  "identity": {
+    "vendor": "Example Vendor (synthetic)",
+    "product": "Edge One",
+    "model": "E1-16",
+    "module": "jetson-orin-nx-16gb",
+    "hardware_revision": "B",
+    "software_revision": "1.4.0",
+    "profile_revision": "1"
+  },
+  "facts": {
+    "architecture": [
+      {
+        "value": "aarch64",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "os_distribution": [
+      {
+        "value": "Example Linux 4 (Yocto based)",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "os_build": [
+      {
+        "value": "el4-20261001",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "abi": [
+      {
+        "value": "glibc 2.39",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "jetpack": [
+      {
+        "value": "6.2",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18"
+      }
+    ],
+    "jetson_linux": [
+      {
+        "value": "36.4.3",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "cuda": [
+      {
+        "value": "12.6.10",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "tensorrt": [
+      {
+        "value": "10.3.0",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ],
+    "container_runtime": [
+      {
+        "value": "containerd 1.7.27",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": "B",
+          "software_revision": "1.4.0"
+        }
+      }
+    ]
+  },
+  "required_interfaces": [
+    "csi-camera",
+    "gpu"
+  ]
+}

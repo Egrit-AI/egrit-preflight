@@ -2,6 +2,8 @@
 
 Research for Preflight #33, 17 November 2026. Proposal only: no runtime, report schema, compatibility assertion or release changes.
 
+Update, 18 November 2026: the companion record, its reference reader and synthetic fixtures for the matrix below are in [vendor-target-profile.md](vendor-target-profile.md). The CLI and report v1 are unchanged, and the sections below are kept as written on 17 November.
+
 ## Public evidence and limits
 
 - [EDGX Sterna](https://www.edgx.space/product/sterna), retrieved 2026-11-17: the vendor describes an Orin NX 16GB system, custom Linux/Yocto and JetPack 6 compatibility. Grade: vendor declaration, not device observation. The page does not pin JetPack minor release, L4T/BSP build, CUDA/TensorRT, ABI, container-runtime version or installed system revision. Do not substitute a generic JetPack 6 target for this unknown configuration.

@@ -1,0 +1,8 @@
+{
+  "document": "egrit-preflight vendor target profile",
+  "profile_version": "1",
+  "synthetic": true,
+  "identity": {
+    "vendor": "Example Vendor (synthetic)",
+    "product": "Edge One",
+    "mode

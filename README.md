@@ -62,6 +62,8 @@ The report's fields and the guarantees a program reading it can rely on: [docs/r
 What `image` establishes about an NVIDIA L4T image from its registry, and what it does not, with a real run:
 [docs/l4t-example.md](docs/l4t-example.md).
 The same kind of run with `--target` set, showing what a target record adds: [docs/target-example.md](docs/target-example.md).
+A companion record for a vendor-customised device, one identified hardware and software configuration at a time, which
+no command reads yet: [docs/vendor-target-profile.md](docs/vendor-target-profile.md).
 Optional and separate, not publicly released yet: Egrit's developer client, which can help an AI assistant choose one
 of this repository's target records and keep your reports with a local plan; nothing here needs it. See
 [docs/where-it-fits.md](docs/where-it-fits.md#optional-egrit-alongside-preflight).

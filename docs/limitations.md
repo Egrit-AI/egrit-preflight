@@ -6,6 +6,10 @@
 - **Performance.** Emulated timings say nothing about Jetson latency, memory or power.
 - **JetPack / L4T compatibility rules.** Target records and image tags are declarations. The tool compares major
   versions and flags disagreement; it does not claim to know NVIDIA's full compatibility matrix.
+- **Vendor-customised devices.** A product family name does not identify the installed software. A
+  [vendor target profile](vendor-target-profile.md) records what sources declare about one configuration; it is not
+  read by the CLI and is not evidence that the device has those versions installed or that an image works on it.
+- **Peripherals.** Cameras, radios, buses and other device interfaces need the physical device.
 - **Supply-chain assurance.** `image` reports which SBOM and provenance attestations a registry lists for the arm64 image.
   It does not read their contents, check a signature, or know who the publisher is. A digest fixes the content of an
   image; it does not say who built it or that it is safe.

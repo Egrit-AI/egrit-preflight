@@ -1,0 +1,51 @@
+{
+  "document": "egrit-preflight vendor target profile",
+  "profile_version": "1",
+  "synthetic": true,
+  "identity": {
+    "vendor": "Example Vendor (synthetic)",
+    "product": "Edge One",
+    "model": "E1-16",
+    "module": "jetson-orin-nx-16gb",
+    "hardware_revision": null,
+    "software_revision": null,
+    "profile_revision": "1"
+  },
+  "facts": {
+    "architecture": [
+      {
+        "value": "aarch64",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "os_distribution": [],
+    "os_build": [],
+    "abi": [],
+    "jetpack": [
+      {
+        "value": "6",
+        "evidence": "declared",
+        "source_url": "https://vendor.example/edge-one/software-1.4.0",
+        "retrieved": "2026-11-18",
+        "applies_to": {
+          "hardware_revision": null,
+          "software_revision": null
+        }
+      }
+    ],
+    "jetson_linux": [],
+    "cuda": [],
+    "tensorrt": [],
+    "container_runtime": []
+  },
+  "required_interfaces": [
+    "csi-camera",
+    "gpu"
+  ]
+}
