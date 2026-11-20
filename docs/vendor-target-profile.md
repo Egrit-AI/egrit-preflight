@@ -71,6 +71,9 @@ stated. A statement has:
 | `retrieved` | `YYYY-MM-DD`: the day the source was read, or the day of the observation. Required with a value. |
 | `applies_to` | The `hardware_revision` and `software_revision` the source is about; `null` where it names none. |
 
+Every statement key is required, including `source_url` and `retrieved` when their values are `null`.
+Equivalence statements also require explicit provenance keys; an observed equivalence may use `source_url: null`.
+
 **`required_interfaces`** lists the device interfaces a workload needs (lower-case names such as `gpu`, `csi-camera`,
 `can0`). **`equivalences`** is optional and described below. `synthetic: true` marks made-up test data.
 

@@ -73,6 +73,9 @@ def _text_or_null(value):
 
 def _check_source(where, item, problems, needs_value):
     """The source half of a statement or an equivalence: grade, URL and date agree with each other."""
+    for key in ("evidence", "source_url", "retrieved"):
+        if key not in item:
+            problems.append(f"{where}.{key} is missing")
     evidence = item.get("evidence")
     if evidence not in EVIDENCE:
         problems.append(f"{where}.evidence must be one of {list(EVIDENCE)}")

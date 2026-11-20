@@ -91,6 +91,11 @@ def invalid():
 
     equivalence = {"identity": identity(hardware="C"), "fields": ["jetpack"], "evidence": "declared",
                    "source_url": SOURCE, "retrieved": DATE}
+
+    def omitted_source(d):
+        d["facts"]["jetpack"][0].update(evidence="observed", source_url=None)
+        del d["facts"]["jetpack"][0]["source_url"]
+
     return {
         "not-an-object": "[]\n",
         "truncated": json.dumps(profile(), indent=2)[:200],
@@ -105,6 +110,7 @@ def invalid():
         "value-declared-without-source": broken(fact("jetpack", source_url=None)),
         "value-declared-without-date": broken(fact("jetpack", retrieved=None)),
         "value-observed-without-date": broken(fact("jetpack", evidence="observed", source_url=None, retrieved=None)),
+        "observed-source-key-missing": broken(omitted_source),
         "null-value-claimed-declared": broken(fact("jetpack", value=None)),
         "not-established-written-as-a-value": broken(fact("jetpack", value="not established")),
         "evidence-verified": broken(fact("jetpack", evidence="verified")),

@@ -103,6 +103,34 @@ class Fixtures(unittest.TestCase):
         self.assertIsNone(profile.load_profile(b"\xff\xfe")[0])
         self.assertIsNone(profile.load_profile("[" * 100000)[0])
 
+    def test_provenance_keys_are_required_even_when_their_values_may_be_null(self):
+        for evidence in ("declared", "observed", "none"):
+            for key in ("evidence", "source_url", "retrieved"):
+                for kind in ("statement", "equivalence"):
+                    if kind == "equivalence" and evidence == "none":
+                        continue
+                    with self.subTest(evidence=evidence, key=key, kind=kind):
+                        doc = copy.deepcopy(valid()["equivalence-scoped-to-two-fields"])
+                        item = (doc["facts"]["jetpack"][0] if kind == "statement"
+                                else doc["equivalences"][0])
+                        item["evidence"] = evidence
+                        if evidence == "observed":
+                            item["source_url"] = None
+                        elif evidence == "none":
+                            item.update(value=None, source_url=None, retrieved=None)
+                        self.assertEqual(profile.check_profile(doc), [])
+                        self.assertEqual(validate(doc, SCHEMA), [])
+                        del item[key]
+                        self.assertTrue(validate(doc, SCHEMA))
+                        loaded, problems = profile.load_profile(json.dumps(doc))
+                        self.assertIsNone(loaded)
+                        self.assertTrue(any(f".{key} is missing" in p for p in problems))
+                        for call in (profile.assess_profile, profile.to_target_record,
+                                     lambda d: profile.resolve(d, "jetpack"),
+                                     lambda d: profile.equivalent(d, valid()["complete-declared"], ["jetpack"])):
+                            with self.assertRaises(ValueError):
+                                call(doc)
+
 
 class ValidationMatrix(unittest.TestCase):
     """The matrix in docs/vendor-target-profile-design.md, one case each."""
