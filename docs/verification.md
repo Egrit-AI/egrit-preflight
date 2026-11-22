@@ -14,6 +14,9 @@ registered by hand through `/proc/sys/fs/binfmt_misc` with the `F` flag):
   for the deterministic negative cases; they are not hardware or container verification.
 - Clean installation: `pip install .` into a new virtual environment, then `egrit-preflight --version`, `doctor` and
   `image` run from outside the source tree. A wheel builds with `pip wheel`.
+- Install from PyPI (2026-11-22): 0.1.0 was uploaded by the `Release` workflow's `pypi` job through trusted publishing.
+  In a clean environment, `pipx install egrit-preflight` and `pip install egrit-preflight` each installed 0.1.0 and
+  `egrit-preflight --version` printed `egrit-preflight 0.1.0`. `doctor` was not run from that install.
 - `doctor` without QEMU reported `arm64.execution` FAIL with the manual recipe and changed nothing; with the handler
   registered it reported PASS.
 - `smoke` without QEMU against a pinned, pulled `ubuntu` image reported FAIL (`exec format error`), as intended.
@@ -113,4 +116,3 @@ change before v0.1.0; the commit the tag points at adds only this record. The fi
   rootless Docker, remote Docker contexts (the QEMU check reads the local machine).
 - Any L4T behaviour and everything on a Jetson: CUDA, TensorRT, GPU, device nodes, performance. These are
   `REQUIRES_HARDWARE`. The registry read of one L4T image is verified (above); nothing from that image has run anywhere.
-- Install from PyPI: nothing is published to PyPI.

@@ -7,7 +7,7 @@ state of the development version, not a promise of dates.
 - [x] Installable with `pip install .`, stdlib only, console script `egrit-preflight`. *AC: clean venv install runs `--version` and `doctor` (done locally; CI job `clean-install`).*
 - [x] Consistent commands, `--json`, exit codes 0/1/2/3. *AC: documented in README; covered by `tests/test_cli_report.py`.*
 - [x] README, Linux, macOS, troubleshooting, limitations. *AC: each linked from README.*
-- [ ] Publish to PyPI under a project-owned account. *AC: `pipx install egrit-preflight` works; needs maintainers' credentials, not automated here.*
+- [x] Publish to PyPI under a project-owned account. *AC: `pipx install egrit-preflight` works (0.1.0 published 2026-11-22 by trusted publishing from the `Release` workflow; a clean `pipx install egrit-preflight` then ran `--version`, #4).*
 
 ## M2: ARM64 Execution
 - [x] Docker, Buildx and daemon detection with remediation. *AC: tests for missing CLI, stopped daemon, missing Buildx.*
