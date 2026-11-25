@@ -129,7 +129,7 @@
   ],
   "overall": "PASS",
   "provenance": {
-    "generated_by": "egrit-preflight 0.1.0",
+    "generated_by": "egrit-preflight 0.1.1",
     "inputs": {
       "image_reference": null,
       "target_record_sha256": null
@@ -149,7 +149,7 @@
   "timestamp": "2026-10-26T07:33:20Z",
   "tool": {
     "name": "egrit-preflight",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "uncertainties": [
     {

@@ -253,7 +253,7 @@
   ],
   "overall": "UNKNOWN",
   "provenance": {
-    "generated_by": "egrit-preflight 0.1.0",
+    "generated_by": "egrit-preflight 0.1.1",
     "inputs": {
       "image_reference": "registry.example/l4t/app:r36.4.0@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "target_record_sha256": "sha256:91d2560d9bed80dcf82621967bbd0328b5e7976252ac7ff43f0f7a1de9b590df"
@@ -281,7 +281,7 @@
   "timestamp": "2026-10-26T07:33:20Z",
   "tool": {
     "name": "egrit-preflight",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "uncertainties": [
     {

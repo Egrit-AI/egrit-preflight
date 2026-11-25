@@ -5,18 +5,18 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
-- 0.1.0 is on PyPI (2026-11-22): the README installs it with `pipx install egrit-preflight` or `pip install egrit-preflight`, and the roadmap and verification record say so (#4). No code change.
+- Package description: documentation links are absolute and pinned to the matching public documentation, so they resolve when read from a package index.
 - Vendor target profile reader: reject omitted provenance keys, including an observed statement or equivalence without `source_url`, before assessment or export can raise `KeyError` (#33). Explicit `null` remains valid where the existing profile schema allows it. Report v1 is unchanged.
 - Vendor target profile, `profile_version` 1: a separate companion record for one identified hardware and software configuration, with a schema (`schema/vendor-target-profile.schema.json`), a reference reader (`egrit_preflight.profile`) and synthetic fixtures (#33). Additive: no CLI command reads it, and report schema v1, the consumer allowlist and the example target records are unchanged. A missing, contradicted or wrong-revision value gives UNKNOWN, an export to a `--target` record is always `declared`, and no hardware compatibility is established. See `docs/vendor-target-profile.md`.
 - Conflicting L4T declarations in an image tag and its `L4T_VERSION` environment now give `target.l4t` UNKNOWN instead of silently preferring the tag (#33). Report schema v1 is unchanged; matching declarations and single-source comparisons keep their existing results. No hardware compatibility is established.
 
 ## 0.1.0 (2026-11-13)
 
-First release. Standard library only, Python 3.9 or later, Apache-2.0.
+First release. Standard library only, Python 3.9 or later, Apache-2.0. Published on PyPI on 2026-11-22 (#4).
 
 - Release workflow: a `pypi` job can upload the same wheel and sdist to PyPI by trusted publishing, in the `pypi`
-  environment, running no build code and storing no token. No trusted publisher exists on PyPI yet, so 0.1.0 is not
-  published there: install the wheel attached to the GitHub release, or from a checkout (#4).
+  environment, running no build code and storing no token. The trusted-publishing setup was completed for the
+  0.1.0 PyPI upload on 2026-11-22 (#4).
 - `report -o FILE`: the help now says what the command does. The report is written to the file and a short summary is
   printed; with `--json` the whole report is printed to standard output as well. No behaviour changes: the file, the
   output and the exit codes are as before. The README quickstart and `docs/where-it-fits.md` drop `--json` from their
