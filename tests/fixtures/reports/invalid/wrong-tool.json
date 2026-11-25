@@ -397,7 +397,7 @@
   ],
   "overall": "UNKNOWN",
   "provenance": {
-    "generated_by": "egrit-preflight 0.1.0",
+    "generated_by": "egrit-preflight 0.1.1",
     "inputs": {
       "image_reference": "example.com/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "target_record_sha256": null
@@ -417,7 +417,7 @@
   "timestamp": "2026-10-26T07:33:20Z",
   "tool": {
     "name": "someone-else",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "uncertainties": [
     {

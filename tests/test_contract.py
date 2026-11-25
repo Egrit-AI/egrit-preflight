@@ -208,7 +208,10 @@ class ConsumerAllowlist(unittest.TestCase):
         return found
 
     def test_the_view_carries_what_the_importer_needs(self):
-        view = contract.allowlisted_view(json.loads(valid()["pass-observed"]))
+        report = json.loads(valid()["pass-observed"])
+        # This view must preserve the producer claim, including that of an older report.
+        report["tool"]["version"] = "0.1.0"
+        view = contract.allowlisted_view(report)
         self.assertEqual(view["schema_version"], "1")
         self.assertEqual(view["tool"], {"name": "egrit-preflight", "version": "0.1.0"})
         self.assertIn("timestamp", view)

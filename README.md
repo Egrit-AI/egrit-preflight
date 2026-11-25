@@ -2,9 +2,9 @@
 
 Free, open-source ARM64 container preflight checks for NVIDIA Jetson and edge AI development.
 
-**Status: version 0.1.0.** The CLI works and is tested, including real linux/arm64 container runs in CI. It has never
-run on a Jetson and cannot verify one: see [what it cannot verify](docs/limitations.md) and
-[what has been verified](docs/verification.md). Its security review was done by an AI reviewer, not a person; a human
+**Status: source version 0.1.1.** The CLI works and is tested, including real linux/arm64 container runs in CI. It has never
+run on a Jetson and cannot verify one: see [what it cannot verify](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/limitations.md) and
+[what has been verified](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/verification.md). Its security review was done by an AI reviewer, not a person; a human
 review is welcome.
 
 Egrit-Preflight tells you, on an ordinary Linux or macOS computer, whether you can run `linux/arm64` containers,
@@ -16,11 +16,11 @@ install anything.
 
 A pass here is **not** a Jetson pass. ARM64 user-space emulation (or a native ARM64 run) does not provide the Jetson GPU,
 the NVIDIA driver, the device nodes or the host-provided CUDA/TensorRT libraries. Those checks always come out as
-`REQUIRES_HARDWARE` and need a physical Jetson. See [docs/limitations.md](docs/limitations.md).
+`REQUIRES_HARDWARE` and need a physical Jetson. See [docs/limitations.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/limitations.md).
 
 ## Install
 
-Needs Python 3.9 or later and no other Python packages. Install it from PyPI:
+Needs Python 3.9 or later and no other Python packages. Install the latest published version from PyPI:
 
 ```sh
 pipx install egrit-preflight          # or: pip install egrit-preflight
@@ -37,8 +37,8 @@ pip install .
 egrit-preflight --version
 ```
 
-You also need Docker (Docker Engine on Linux, Docker Desktop on macOS). Setup: [Linux](docs/linux.md),
-[macOS](docs/macos.md), [troubleshooting](docs/troubleshooting.md).
+You also need Docker (Docker Engine on Linux, Docker Desktop on macOS). Setup: [Linux](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/linux.md),
+[macOS](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/macos.md), [troubleshooting](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/troubleshooting.md).
 
 ## Quickstart
 
@@ -62,16 +62,16 @@ Expected: `[PASS] smoke.arch: linux/arm64 container ran the 'arch' test (prints 
 `[REQUIRES_HARDWARE] jetson.gpu` with the reminder that this is not GPU compatibility.
 
 Where this fits in a build-to-device process, what to do with each outcome, and how to use it in CI:
-[docs/where-it-fits.md](docs/where-it-fits.md).
-The report's fields and the guarantees a program reading it can rely on: [docs/report-contract.md](docs/report-contract.md).
+[docs/where-it-fits.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/where-it-fits.md).
+The report's fields and the guarantees a program reading it can rely on: [docs/report-contract.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/report-contract.md).
 What `image` establishes about an NVIDIA L4T image from its registry, and what it does not, with a real run:
-[docs/l4t-example.md](docs/l4t-example.md).
-The same kind of run with `--target` set, showing what a target record adds: [docs/target-example.md](docs/target-example.md).
+[docs/l4t-example.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/l4t-example.md).
+The same kind of run with `--target` set, showing what a target record adds: [docs/target-example.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/target-example.md).
 A companion record for a vendor-customised device, one identified hardware and software configuration at a time, which
-no command reads yet: [docs/vendor-target-profile.md](docs/vendor-target-profile.md).
+no command reads yet: [docs/vendor-target-profile.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/vendor-target-profile.md).
 Optional and separate, not publicly released yet: Egrit's developer client, which can help an AI assistant choose one
 of this repository's target records and keep your reports with a local plan; nothing here needs it. See
-[docs/where-it-fits.md](docs/where-it-fits.md#optional-egrit-alongside-preflight).
+[docs/where-it-fits.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/where-it-fits.md#optional-egrit-alongside-preflight).
 
 ## Outcomes and exit codes
 
@@ -98,11 +98,11 @@ interrupted.
   data is `UNKNOWN`. A listed attestation is the publisher's declaration: its contents and any signature are **not**
   verified. Registry lookups read manifests only, never layers.
 - `smoke --image REF --yes [--test arch|os-release|python-import] [--module NAME] [--pull] [--timeout S]`: one
-  allowlisted command in a locked-down container ([security](docs/security.md)). `python-import --module numpy` checks
+  allowlisted command in a locked-down container ([security](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/security.md)). `python-import --module numpy` checks
   that the image's `python3` imports a module on ARM64 CPU (no network, no GPU). Refuses an unpinned tag unless
   `--allow-mutable`.
 - `report [--image REF] [--smoke --yes] [--pull] [--json] [-o FILE]`: the above as one JSON document
-  ([schema](schema/report.schema.json), [example](docs/example-report.json)). Set `SOURCE_DATE_EPOCH` for byte-identical
+  ([schema](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/schema/report.schema.json), [example](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/example-report.json)). Set `SOURCE_DATE_EPOCH` for byte-identical
   output. The report is always JSON. With `-o FILE` it goes to the file and the terminal gets a short summary; add
   `--json` to print the whole report to standard output as well.
 
@@ -119,13 +119,13 @@ letters and digits joined by hyphens, at most 64 characters. It adds no check. T
 `target.record.module_id` so that a program comparing a later device result with this report can tell one module from
 another; a missing or malformed value is `null`, never read from the record's `name`.
 
-[examples/targets/](examples/targets/README.md) holds a declared record for each recent JetPack release (6.2.1, 6.2,
+[examples/targets/](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/examples/targets/README.md) holds a declared record for each recent JetPack release (6.2.1, 6.2,
 6.1 and 5.1.8), each citing NVIDIA's release page and the date it was read. Pass the one your device runs, for example
 `--target examples/targets/jetpack-6.2.json`, and check it against what the device reports.
 
 ## Free and open source
 
-Egrit-Preflight is Apache-2.0 and copyright 2026 Neul Space Ltd (see [NOTICE](NOTICE)). The local CLI needs no account, no login, no subscription and no usage credits, and it
+Egrit-Preflight is Apache-2.0 and copyright 2026 Neul Space Ltd (see [NOTICE](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/NOTICE)). The local CLI needs no account, no login, no subscription and no usage credits, and it
 sends no telemetry: it makes no network connections of its own (Docker may, when you ask it to pull or inspect a
 registry). Functionality released in the free edition will not be withdrawn to create paid tiers.
 
@@ -141,7 +141,7 @@ used only to say which software and hardware a check is about.
 
 ## What has been verified
 
-See [docs/verification.md](docs/verification.md) for exactly what has run, where, and what has not.
+See [docs/verification.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/docs/verification.md) for exactly what has run, where, and what has not.
 
 ## Development
 
@@ -149,4 +149,4 @@ See [docs/verification.md](docs/verification.md) for exactly what has run, where
 PYTHONPATH=src python3 -m unittest discover -s tests -t . -v
 ```
 
-Contributing: [CONTRIBUTING.md](CONTRIBUTING.md). Security: [SECURITY.md](SECURITY.md).
+Contributing: [CONTRIBUTING.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/CONTRIBUTING.md). Security: [SECURITY.md](https://github.com/Egrit-AI/egrit-preflight/blob/5a299fb3a8714d0d491bfd6dad015c6725615f88/SECURITY.md).
