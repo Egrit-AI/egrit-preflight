@@ -67,5 +67,41 @@ class TargetLibrary(unittest.TestCase):
         self.assertEqual(linked, {p.name for p in RECORDS})
 
 
+class ThorExample(unittest.TestCase):
+    def test_module_record_preserves_the_release_and_exact_module_identity(self):
+        release = json.loads((TARGETS / "jetpack-7.2.json").read_text(encoding="utf-8"))
+        record, error = load_target(str(EXAMPLES / "target-agx-thor-jetpack-7.2.json"))
+        self.assertIsNone(error)
+        self.assertEqual(record["module_id"], "jetson-agx-thor-devkit")
+        self.assertNotIn("module_id", release)
+        self.assertEqual(record["software"], {"jetpack": "7.2", "jetson_linux": "39.2"})
+        self.assertEqual(record["runtimes"], {"cuda": "13.2.1", "tensorrt": "10.16.2"})
+        for key in ("architecture", "software", "runtimes", "status"):
+            self.assertEqual(record[key], release[key])
+        self.assertEqual(record["status"], "declared")
+
+    def test_thor_image_agreement_stays_declared_and_requires_hardware(self):
+        runner = FakeRunner([(("docker", "image", "inspect"), ok(image_inspect("arm64", [
+            "CUDA_VERSION=13.2.1", "TENSORRT_VERSION=10.16.2"])))])
+        result = inspect_image(f"nvcr.io/nvidia/l4t-base:r39.2.0@{DIGEST}",
+                               str(EXAMPLES / "target-agx-thor-jetpack-7.2.json"), runner=runner)
+        self.assertEqual(result["target"]["module_id"], "jetson-agx-thor-devkit")
+        self.assertEqual(result["target"]["status"], "declared")
+        for key in ("target.jetpack", "target.l4t"):
+            self.assertEqual(by_id(result, key)["outcome"], "PASS")
+            self.assertEqual(by_id(result, key)["evidence"], "declared")
+        for key in ("runtime.cuda", "runtime.tensorrt", "jetson.gpu"):
+            self.assertEqual(by_id(result, key)["outcome"], "REQUIRES_HARDWARE")
+
+    def test_an_orin_l4t_family_cannot_answer_the_thor_record(self):
+        runner = FakeRunner([(("docker", "image", "inspect"), ok(image_inspect("arm64", [
+            "CUDA_VERSION=12.6.10", "TENSORRT_VERSION=10.3.0"])))])
+        result = inspect_image(f"nvcr.io/nvidia/l4t-base:r36.4.0@{DIGEST}",
+                               str(EXAMPLES / "target-agx-thor-jetpack-7.2.json"), runner=runner)
+        self.assertEqual(by_id(result, "target.l4t")["outcome"], "FAIL")
+        self.assertEqual(by_id(result, "runtime.cuda")["outcome"], "FAIL")
+        self.assertEqual(by_id(result, "jetson.gpu")["outcome"], "REQUIRES_HARDWARE")
+
+
 if __name__ == "__main__":
     unittest.main()

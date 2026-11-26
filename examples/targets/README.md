@@ -1,6 +1,6 @@
 # Target records by JetPack release
 
-Last updated: 2026-10-31
+Last updated: 2026-11-26
 
 Declared target records for recent JetPack releases, to pass to `--target`. Each states the Jetson Linux (L4T), CUDA
 and TensorRT versions NVIDIA publishes for that release, the page they were read from and the date it was read. They
@@ -9,6 +9,7 @@ check against your own device, not a compatibility table the tool consults.
 
 | Record | JetPack | Jetson Linux | CUDA | TensorRT | Source, retrieved |
 |---|---|---|---|---|---|
+| [jetpack-7.2.json](jetpack-7.2.json) | 7.2 | 39.2 | 13.2.1 | 10.16.2 | [JetPack 7.2 archive](https://developer.nvidia.com/embedded/jetpack/downloads/archive-7.2), 2026-11-26 |
 | [jetpack-6.2.3.json](jetpack-6.2.3.json) | 6.2.3 | 36.5.2 | 12.6.10 | 10.3.0 | [jetpack-sdk-623](https://developer.nvidia.com/embedded/jetpack-sdk-623) and [jetson-linux-r3652](https://developer.nvidia.com/embedded/jetson-linux-r3652), 2026-10-29 |
 | [jetpack-6.2.1.json](jetpack-6.2.1.json) | 6.2.1 | 36.4.4 | 12.6.10 | 10.3.0 | [jetpack-sdk-621](https://developer.nvidia.com/embedded/jetpack-sdk-621), 2026-10-30 |
 | [jetpack-6.2.json](jetpack-6.2.json) | 6.2 | 36.4.3 | 12.6.10 | 10.3.0 | [jetpack-sdk-62](https://developer.nvidia.com/embedded/jetpack-sdk-62), 2026-10-30 |
@@ -25,6 +26,10 @@ installed CUDA is 12.6.11 will not match this record, which is the correct readi
 
 JetPack 5.1.8 is the newest 5.1.x release NVIDIA's [JetPack archive](https://developer.nvidia.com/embedded/jetpack-archive)
 listed on 2026-10-30. The JetPack 6.1 page states Jetson Linux as 36.4, without a patch number, so the record does too.
+
+The JetPack 7.2 archive names the Jetson AGX Thor Developer Kit in its supported hardware list. The
+[module-specific Thor example](../target-agx-thor-jetpack-7.2.json) carries that identity separately from this
+release-only record. Neither record establishes an installed device, GPU execution or an Azure Local image.
 
 ## Use
 

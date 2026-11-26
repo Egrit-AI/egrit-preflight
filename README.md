@@ -119,9 +119,12 @@ letters and digits joined by hyphens, at most 64 characters. It adds no check. T
 `target.record.module_id` so that a program comparing a later device result with this report can tell one module from
 another; a missing or malformed value is `null`, never read from the record's `name`.
 
-[examples/targets/](examples/targets/README.md) holds a declared record for each recent JetPack release (6.2.1, 6.2,
+[examples/targets/](examples/targets/README.md) holds declared records for JetPack releases (7.2, 6.2.3, 6.2.1, 6.2,
 6.1 and 5.1.8), each citing NVIDIA's release page and the date it was read. Pass the one your device runs, for example
 `--target examples/targets/jetpack-6.2.json`, and check it against what the device reports.
+
+The [Jetson AGX Thor example](examples/target-agx-thor-jetpack-7.2.json) names one module for JetPack 7.2. It is a
+declaration from NVIDIA's release page read on 2026-11-26, not evidence of an installed device or Azure Local image.
 
 ## Free and open source
 
