@@ -1,0 +1,22 @@
+{
+  "name": "Jetson AGX Thor developer kit, JetPack 7.2 (declared, not read from a device)",
+  "module_id": "jetson-agx-thor-devkit",
+  "architecture": "aarch64",
+  "software": {
+    "jetpack": "7.2",
+    "jetson_linux": "39.2"
+  },
+  "runtimes": {
+    "cuda": "13.2.1",
+    "tensorrt": "10.16.2"
+  },
+  "status": "declared",
+  "sources": [
+    {
+      "what": "JetPack 7.2 release page: Jetson AGX Thor Developer Kit support, Jetson Linux 39.2, CUDA 13.2.1, TensorRT 10.16.2",
+      "url": "https://developer.nvidia.com/embedded/jetpack/downloads/archive-7.2",
+      "retrieved": "2026-11-26",
+      "note": "The same release as examples/targets/jetpack-7.2.json, named for one module. No device was read; this record does not establish an Azure Local image, installed libraries or GPU execution."
+    }
+  ]
+}

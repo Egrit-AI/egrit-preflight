@@ -1,0 +1,20 @@
+{
+  "name": "JetPack 7.2 (declared from NVIDIA's release page, not read from a device)",
+  "architecture": "aarch64",
+  "software": {
+    "jetpack": "7.2",
+    "jetson_linux": "39.2"
+  },
+  "runtimes": {
+    "cuda": "13.2.1",
+    "tensorrt": "10.16.2"
+  },
+  "status": "declared",
+  "sources": [
+    {
+      "what": "JetPack 7.2 release page: Jetson Linux 39.2, CUDA 13.2.1, TensorRT 10.16.2",
+      "url": "https://developer.nvidia.com/embedded/jetpack/downloads/archive-7.2",
+      "retrieved": "2026-11-26"
+    }
+  ]
+}
