@@ -3,12 +3,14 @@
 130 interrupted."""
 
 import argparse
+import json
 import math
 import os
 import sys
 
 from . import __version__, report as reportmod, safe, smoke as smokemod
 from . import outcomes as o
+from .device import inspect_device
 from .doctor import run_doctor
 from .image import inspect_image
 from .smoke import DEFAULT_TEST, TESTS, run_smoke
@@ -54,7 +56,7 @@ def build_parser():
         description="Free, open-source ARM64 container preflight checks for NVIDIA Jetson and edge AI development. "
                     "Local only: no account, no telemetry. A pass here is not Jetson, CUDA or TensorRT compatibility.")
     p.add_argument("--version", action="version", version=f"egrit-preflight {__version__}")
-    sub = p.add_subparsers(dest="command", required=True, metavar="{doctor,image,smoke,report}")
+    sub = p.add_subparsers(dest="command", required=True, metavar="{doctor,device,image,smoke,report}")
 
     def common(sp, image_required=False):
         sp.add_argument("--json", action="store_true", help="print the machine-readable report")
@@ -62,6 +64,10 @@ def build_parser():
 
     d = sub.add_parser("doctor", help="check Docker, Buildx and ARM64 execution support (read-only)")
     common(d)
+
+    device = sub.add_parser("device", help="read local JetPack and Jetson Linux versions")
+    device.add_argument("--json", action="store_true", help="print a target record suitable for image --target")
+    device.add_argument("--strict", action="store_true", help="exit 3 if either version is unknown")
 
     i = sub.add_parser("image", help="inspect an image reference (nothing is pulled or run)")
     i.add_argument("--image", required=True, help="image reference, ideally name:tag@sha256:<digest>")
@@ -125,6 +131,16 @@ def main(argv=None, out=None, err=None, **hooks):
 def _run(args, out, err, hooks):
     runner = hooks.get("runner")
     kw = {"runner": runner} if runner else {}
+
+    if args.command == "device":
+        record = inspect_device(**kw)
+        software = record["software"]
+        if args.json:
+            print(json.dumps(record, indent=2), file=out)
+        else:
+            print("Jetson Linux (L4T):", software["jetson_linux"] or "UNKNOWN", file=out)
+            print("JetPack (installed nvidia-jetpack package):", software["jetpack"] or "UNKNOWN", file=out)
+        return 3 if args.strict and None in software.values() else 0
 
     if args.command == "doctor":
         doc = run_doctor(**kw)

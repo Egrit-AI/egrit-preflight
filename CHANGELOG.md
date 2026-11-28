@@ -5,6 +5,8 @@ repository; entries after it refer to this repository.
 
 ## Unreleased
 
+- Added `device` to read installed JetPack and Jetson Linux versions and export an image target record with `--json`.
+
 - Declared JetPack 7.2 and Jetson AGX Thor developer-kit target examples, sourced from NVIDIA's release page on 2026-11-26. The existing reader and report schema are unchanged; no installed device, Azure Local image or GPU compatibility is established.
 - 0.1.0 is on PyPI (2026-11-22): the README installs it with `pipx install egrit-preflight` or `pip install egrit-preflight`, and the roadmap and verification record say so (#4). No code change.
 - Vendor target profile reader: reject omitted provenance keys, including an observed statement or equivalence without `source_url`, before assessment or export can raise `KeyError` (#33). Explicit `null` remains valid where the existing profile schema allows it. Report v1 is unchanged.
