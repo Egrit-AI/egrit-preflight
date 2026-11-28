@@ -106,6 +106,18 @@ interrupted.
   output. The report is always JSON. With `-o FILE` it goes to the file and the terminal gets a short summary; add
   `--json` to print the whole report to standard output as well.
 
+### What version is my Jetson running?
+
+Run `egrit-preflight device` directly on the Jetson host, including over SSH. It reads Jetson Linux (L4T)
+from `/etc/nv_tegra_release` and JetPack from the installed `nvidia-jetpack` package. Each missing version
+prints as `UNKNOWN`. A minimal installation can have a known L4T version without the JetPack metapackage.
+A laptop or container reads its own filesystem. No Docker, network or sudo is needed.
+
+Save a target record with `egrit-preflight device --json > my-jetson.json`. Copy it to your build machine
+and pass it to `image --target my-jetson.json` alongside your usual `--image` argument. Missing versions
+are JSON null. Image comparisons treat the saved values as declared. Add `--strict` to the device command
+for exit code 3 when either version is unknown.
+
 ### Target record
 
 `--target` reads a small JSON file. The fields used are `architecture`, `software.jetpack`, `software.jetson_linux`,
